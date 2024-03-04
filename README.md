@@ -53,7 +53,7 @@ Unless otherwise instructed, create new classes/enums in the `cz.muni.fi.pb162.p
      > The same goes for the 'id' attribute with a unique value.
 8. Modify the `Board` class:
    - Add the `findCoordinatesOfPieceById` method, which takes the `id` of type long as an input parameter and 
-     returns the piece with the same id from the board. If there is no piece of this ID on the board,
+     returns the position of a piece with the same id from the board. If there is no piece of this ID on the board,
      then the method returns `null`.
 9. Edit the executable `Main` class:
    - Delete the current code in the main method.
