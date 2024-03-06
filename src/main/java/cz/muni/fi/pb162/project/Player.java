@@ -22,7 +22,7 @@ public class Player {
      *
      * @return name of player.
      */
-    public String getName(){
+    public String getName() {
         return name;
     }
 
@@ -31,7 +31,7 @@ public class Player {
      *
      * @param name name of player.
      */
-    private void setName(String name){
+    private void setName(String name) {
         this.name = name;
     }
 }
