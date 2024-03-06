@@ -7,14 +7,31 @@ package cz.muni.fi.pb162.project;
  */
 public class Player {
     private String name;
-    Player(String newName){
-        setName(newName);
+
+    /**
+     * Class Player to represent players. Name sets once and never changes.
+     *
+     * @author Azizbek Toshpulatov
+     */
+    public Player(String name) {
+        setName(name);
     }
 
+    /**
+     * Returns player's name.
+     *
+     * @return name of player.
+     */
     public String getName(){
         return name;
     }
-    private void setName(String newName){
-        name = newName;
+
+    /**
+     * Sets player's name.
+     *
+     * @param name name of player.
+     */
+    private void setName(String name){
+        this.name = name;
     }
 }

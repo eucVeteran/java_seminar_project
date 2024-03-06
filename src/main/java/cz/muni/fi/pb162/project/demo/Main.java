@@ -1,4 +1,9 @@
-package cz.muni.fi.pb162.project;
+package cz.muni.fi.pb162.project.demo;
+
+import cz.muni.fi.pb162.project.Board;
+import cz.muni.fi.pb162.project.Piece;
+import cz.muni.fi.pb162.project.Player;
+import cz.muni.fi.pb162.project.Position;
 
 /**
  * Class for running main method.
