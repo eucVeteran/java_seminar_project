@@ -13,32 +13,23 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class BoardTest {
 
-    private final Board board = new Board(8);
+    private final Board board = new Board();
 
     @Test
     void attributesAndMethodsAmount() {
         BasicRulesTester.attributesAmount(Board.class, 1);
-        BasicRulesTester.methodsAmount(Board.class, 5);
-        assertEquals(8, board.getSize());
+        BasicRulesTester.methodsAmount(Board.class, 6);
+        BasicRulesTester.attributesFinal(Board.class, 2);
     }
 
     @Test
     void getPiece() {
-        var piece = new Piece();
-        board.putPieceOnBoard(new Position(3, 4), piece);
-        board.putPieceOnBoard(new Position(6, 1), piece);
-        var piece2 = new Piece();
-        board.putPieceOnBoard(new Position(2, 2), piece2);
-        board.putPieceOnBoard(new Position(5, 7), piece2);
-
         assertNull(board.getPiece(new Position(1, 3)));
         assertNull(board.getPiece(new Position(7, 6)));
-        assertNull(board.getPiece(new Position(9, 9)));
-        assertNull(board.getPiece(new Position(2, -2)));
-        assertEquals(piece, board.getPiece(new Position(3, 4)));
-        assertEquals(piece, board.getPiece(new Position(6, 1)));
-        assertEquals(piece2, board.getPiece(new Position(2, 2)));
-        assertEquals(piece2, board.getPiece(new Position(5, 7)));
+        var piece = new Piece(Color.WHITE, PieceType.KING);
+        board.putPieceOnBoard(new Position(1, 2), piece);
+        assertEquals(piece.getId(), board.getPiece(new Position(1, 2)).getId());
+        assertEquals(piece.getId(), board.getPiece(new Position('b', 3)).getId());
     }
 
     @Test
@@ -55,7 +46,7 @@ public class BoardTest {
 
     @Test
     void isEmptyAndPutPieceOnBoard() {
-        var piece = new Piece();
+        var piece = new Piece(Color.WHITE, PieceType.KING);
         board.putPieceOnBoard(new Position(3, 4), piece);
         board.putPieceOnBoard(new Position(6, 1), piece);
         board.putPieceOnBoard(new Position(2, 2), piece);
@@ -70,4 +61,22 @@ public class BoardTest {
         assertFalse(board.isEmpty(new Position(2, 2)));
         assertFalse(board.isEmpty(new Position(5, 7)));
     }
+
+    @Test
+    void findCoordinatesOfPieceById() {
+        var piece = new Piece(Color.WHITE, PieceType.KING);
+        board.putPieceOnBoard(new Position(5, 5), piece);
+        var result = board.findCoordinatesOfPieceById(piece.getId());
+        assertEquals(5, result.column());
+        assertEquals(5, result.line());
+        var piece2 = new Piece(Color.WHITE, PieceType.KING);
+        board.putPieceOnBoard(new Position(2, 7), piece2);
+        var result2 = board.findCoordinatesOfPieceById(piece2.getId());
+        assertEquals(2, result2.column());
+        assertEquals(7, result2.line());
+        var result3 = board.findCoordinatesOfPieceById(piece.getId() + piece.getId() + 42);
+        assertNull(result3);
+    }
+
+
 }

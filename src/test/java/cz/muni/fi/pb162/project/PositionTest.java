@@ -20,15 +20,17 @@ public class PositionTest {
     @Test
     void attributesAndMethodsAmount() {
         BasicRulesTester.attributesAmount(Position.class, 2);
-        BasicRulesTester.methodsAmount(Position.class, 4);
+        BasicRulesTester.methodsAmount(Position.class, 6);
+        BasicRulesTester.attributesFinal(Position.class, 3);
+
     }
 
     @Test
     void testValues() {
-        assertEquals(0, new Position('a', 8).getColumn());
-        assertEquals(6, new Position('g', 8).getColumn());
-        assertEquals(7, new Position('a', 8).getLine());
-        assertEquals(7, new Position('g', 8).getLine());
+        assertEquals(0, new Position('a', 8).column());
+        assertEquals(6, new Position('g', 8).column());
+        assertEquals(7, new Position('a', 8).line());
+        assertEquals(7, new Position('g', 8).line());
     }
 
     @Test
@@ -36,4 +38,18 @@ public class PositionTest {
         assertEquals("a8", new Position('a', 8).toString());
         assertEquals("g6", new Position('g', 6).toString());
     }
+
+    @Test
+    void add() {
+        var result = four.add(five);
+        assertEquals(15, result.column());
+        assertEquals(-27, result.line());
+        var result2 = five.add(six);
+        assertEquals(8, result2.column());
+        assertEquals(3, result2.line());
+        var result3 = six.add(five);
+        assertEquals(result2.column(), result3.column());
+        assertEquals(result2.line(), result3.line());
+    }
+
 }
