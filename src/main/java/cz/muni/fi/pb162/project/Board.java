@@ -6,6 +6,7 @@ package cz.muni.fi.pb162.project;
  * @author Azizbek Toshpulatov
  */
 public class Board {
+    public static final int DEF_SIZE = 8;
     private final Piece[][] board;
 
     /**
@@ -15,6 +16,30 @@ public class Board {
      */
     public Board(int size) {
         board = new Piece[size][size];
+    }
+
+    /**
+     * Constructs a board with a default size of 8.
+     */
+    public Board() {
+        this(DEF_SIZE);
+    }
+
+    /**
+     * Returns a position of a piece with the same id on the board.
+     *
+     * @param id id of a piece to find.
+     * @return position of a piece with the same id.
+     */
+    public Position findCoordinatesOfPieceById(long id) {
+        for (int i = 0; i < getSize(); i++) {
+            for (int j = 0; j < getSize(); j++) {
+                if (board[i][j] != null && board[i][j].getId() == id) {
+                    return new Position(i, j);
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -33,8 +58,8 @@ public class Board {
      * @return <code>true</code> if the position is within the bounds of the board, otherwise <code>false</code>.
      */
     public boolean inRange(Position position) {
-        int column = position.getColumn();
-        int line = position.getLine();
+        int column = position.column();
+        int line = position.line();
 
         return (column >= 0 && column < getSize()) && (line >= 0 && line < getSize());
     }
@@ -44,7 +69,7 @@ public class Board {
      *
      * @param position the position to check
      * @return <code>true</code> if the position is within
-     *         the bounds of the board and empty, otherwise <code>false</code>.
+     * the bounds of the board and empty, otherwise <code>false</code>.
      */
     public boolean isEmpty(Position position) {
         return getPiece(position) == null;
@@ -57,7 +82,7 @@ public class Board {
      * @return the piece at the specified position, or <code>null</code> if there is no piece.
      */
     public Piece getPiece(Position position) {
-        return inRange(position) ? board[position.getColumn()][position.getLine()] : null;
+        return inRange(position) ? board[position.column()][position.line()] : null;
     }
 
     /**
@@ -67,6 +92,6 @@ public class Board {
      * @param piece    the piece to place on the board
      */
     public void putPieceOnBoard(Position position, Piece piece) {
-        board[position.getColumn()][position.getLine()] = piece;
+        board[position.column()][position.line()] = piece;
     }
 }
