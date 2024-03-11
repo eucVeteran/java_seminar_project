@@ -8,17 +8,11 @@ package cz.muni.fi.pb162.project;
  * @author Azizbek Toshpulatov
  */
 public record Player(String name, Color color) {
-
     /**
-     * Default constructor of a player.
-     */
-    public Player {
-    }
-
-    /**
-     * Overridden method toString that returns "-".
+     * Overridden method toString that returns string representation
+     * of a player, e.g. "Eva-WHITE", "Tom-BLACK".
      *
-     * @return "-".
+     * @return {name}-{color}.
      */
     @Override
     public String toString() {

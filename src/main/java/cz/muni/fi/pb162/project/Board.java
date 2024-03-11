@@ -6,7 +6,11 @@ package cz.muni.fi.pb162.project;
  * @author Azizbek Toshpulatov
  */
 public class Board {
+    /**
+     * Default size of the board
+     */
     public static final int DEF_SIZE = 8;
+
     private final Piece[][] board;
 
     /**
@@ -32,10 +36,13 @@ public class Board {
      * @return position of a piece with the same id.
      */
     public Position findCoordinatesOfPieceById(long id) {
-        for (int i = 0; i < getSize(); i++) {
-            for (int j = 0; j < getSize(); j++) {
-                if (board[i][j] != null && board[i][j].getId() == id) {
-                    return new Position(i, j);
+        for (int column = 0; column < getSize(); column++) {
+            for (int line = 0; line < getSize(); line++) {
+                Position currentPos = new Position(column, line);
+                Piece piece = getPiece(currentPos);
+
+                if (piece != null && piece.getId() == id) {
+                    return currentPos;
                 }
             }
         }
@@ -69,7 +76,8 @@ public class Board {
      *
      * @param position the position to check
      * @return <code>true</code> if the position is within
-     * the bounds of the board and empty, otherwise <code>false</code>.
+     * the bounds of the board and empty or the position is out of the bounds of the board,
+     * otherwise <code>false</code>.
      */
     public boolean isEmpty(Position position) {
         return getPiece(position) == null;

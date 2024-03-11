@@ -8,13 +8,14 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author Azizbek Toshpulatov
  */
 public class Piece {
+    private static final AtomicLong ID_VALUES = new AtomicLong(0);
+
     private final Color color;
     private final PieceType pieceType;
-    private static final AtomicLong ID_VALUES = new AtomicLong(0);
     private final long id = ID_VALUES.incrementAndGet();
 
     /**
-     * Constructor Piece that takes color and piece type and sets them once and forever.
+     * Creates a new instance of Piece with given {@code color} and {@code pieceType}.
      * It also automatically sets a unique id number to the attribute {@link Piece#id}.
      *
      * @param color     color of a piece.
