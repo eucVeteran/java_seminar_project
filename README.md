@@ -62,7 +62,7 @@ Unless otherwise instructed, create new classes/enums/records in the `cz.muni.fi
     - Add the `setInitialSet()` method, which sets the initial layout of the pieces on the chess board,
       either for [chess game](https://en.wikipedia.org/wiki/Rules_of_chess#Initial_setup) or
       for [draughts played on chess board](https://en.wikipedia.org/wiki/English_draughts).
-      This method is overridden in the corresponding classes and called automatically from constructors (nowhere else).
+      This method is implemented in the corresponding subclasses and called automatically from constructors (nowhere else).
       Use the sample code below - modify it if necessary.
       > Discuss why this method should be private or final.
 4. Create a new `Playable` **interface** introducing a single well-documented method.
