@@ -1,24 +1,15 @@
 package cz.muni.fi.pb162.project;
 
+
 /**
- * Class Position represents position (column, line).
+ * Position represents position (column, line). Takes first argument as a number or a letter.
  *
+ * @param column the column of the position starting from 0.
+ * @param line   the line of the position starting from 0.
  * @author Azizbek Toshpulatov
  */
-public class Position {
-    private final int column;
-    private final int line;
-
-    /**
-     * Constructs a Position object with the specified column and line.
-     *
-     * @param column the column of the position starting from 0
-     * @param line   the line of the position starting from 0
-     */
-    public Position(int column, int line) {
-        this.column = column;
-        this.line = line;
-    }
+public record Position(int column, int line) {
+    private static final int UNICODE_A_VAL = 97;
 
     /**
      * Constructs a Position object with the specified column character and line number.
@@ -27,7 +18,17 @@ public class Position {
      * @param line       the line of the position starting from 1
      */
     public Position(char columnChar, int line) {
-        this(columnChar - 97, line - 1);
+        this(columnChar - UNICODE_A_VAL, line - 1);
+    }
+
+    /**
+     * Adds 2 positions and returns a new position, e.g. (1, 3) + (1, 3) = (2, 6).
+     *
+     * @param toAdd position to add.
+     * @return a new position.
+     */
+    public Position add(Position toAdd) {
+        return new Position(this.column + toAdd.column, this.line + toAdd.line);
     }
 
     /**
@@ -37,24 +38,6 @@ public class Position {
      */
     @Override
     public String toString() {
-        return String.valueOf((char) (this.column + 97)) + (this.line + 1);
-    }
-
-    /**
-     * Returns the column of the position.
-     *
-     * @return the column of the position
-     */
-    public int getColumn() {
-        return this.column;
-    }
-
-    /**
-     * Returns the line of the position.
-     *
-     * @return the line of the position
-     */
-    public int getLine() {
-        return this.line;
+        return String.valueOf((char) (this.column() + UNICODE_A_VAL)) + (this.line() + 1);
     }
 }

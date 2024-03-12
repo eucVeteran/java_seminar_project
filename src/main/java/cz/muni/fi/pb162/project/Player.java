@@ -1,37 +1,21 @@
 package cz.muni.fi.pb162.project;
 
 /**
- * Class Player to represent players. Name sets once and never changes.
+ * Record Player to represent players. Name and color sets once and never changes.
  *
+ * @param name  name of a player.
+ * @param color color of game pieces of a player.
  * @author Azizbek Toshpulatov
  */
-public class Player {
-    private String name;
-
+public record Player(String name, Color color) {
     /**
-     * Class Player to represent players. Name sets once and never changes.
+     * Overridden method toString that returns string representation
+     * of a player, e.g. "Eva-WHITE", "Tom-BLACK".
      *
-     * @author Azizbek Toshpulatov
+     * @return {name}-{color}.
      */
-    public Player(String name) {
-        setName(name);
-    }
-
-    /**
-     * Returns player's name.
-     *
-     * @return name of player.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Sets player's name.
-     *
-     * @param name name of player.
-     */
-    private void setName(String name) {
-        this.name = name;
+    @Override
+    public String toString() {
+        return name + "-" + color;
     }
 }
