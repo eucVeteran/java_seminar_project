@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 /**
  * @author Alzbeta Strompova
@@ -19,9 +20,8 @@ public class PieceTest {
     @Test
     void attributesAndMethodsAmount() {
         BasicRulesTester.attributesAmount(Piece.class, 3);
-        BasicRulesTester.methodsAmount(Piece.class, 3);
+        BasicRulesTester.methodsAmount(Piece.class, 5);
         BasicRulesTester.attributesFinal(Piece.class, 4);
-
     }
 
     @Test
@@ -46,4 +46,35 @@ public class PieceTest {
         assertEquals(PieceType.QUEEN, piece2.getPieceType());
         assertEquals(PieceType.ROOK, piece3.getPieceType());
     }
+
+    @Test
+    void testToString() {
+        assertEquals("K", piece.toString());
+        assertEquals("Q", piece2.toString());
+        assertEquals("R", piece3.toString());
+    }
+
+    @Test
+    void makeClone() {
+        var pieceClone = piece.makeClone();
+        var pieceClone2 = piece.makeClone();
+        var piece2Clone = piece2.makeClone();
+        var piece3Clone = piece3.makeClone();
+        assertEquals(piece.getColor(), pieceClone.getColor());
+        assertEquals(piece.getPieceType(), pieceClone.getPieceType());
+        assertNotEquals(piece.getId(), pieceClone.getId());
+
+        assertEquals(piece.getColor(), pieceClone2.getColor());
+        assertEquals(piece.getPieceType(), pieceClone2.getPieceType());
+        assertNotEquals(piece.getId(), pieceClone2.getId());
+
+        assertEquals(piece2.getColor(), piece2Clone.getColor());
+        assertEquals(piece2.getPieceType(), piece2Clone.getPieceType());
+        assertNotEquals(piece.getId(), piece2Clone.getId());
+
+        assertEquals(piece3.getColor(), piece3Clone.getColor());
+        assertEquals(piece3.getPieceType(), piece3Clone.getPieceType());
+        assertNotEquals(piece3.getId(), piece3Clone.getId());
+    }
+
 }

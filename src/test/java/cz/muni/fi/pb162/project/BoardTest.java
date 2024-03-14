@@ -23,6 +23,11 @@ public class BoardTest {
     }
 
     @Test
+    void inheritance() {
+        BasicRulesTester.testInheritance(Prototype.class, Piece.class);
+    }
+
+    @Test
     void getPiece() {
         assertNull(board.getPiece(new Position(1, 3)));
         assertNull(board.getPiece(new Position(7, 6)));
