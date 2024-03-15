@@ -1,10 +1,10 @@
 package cz.muni.fi.pb162.project;
 
 /**
- * Enum PieceType to represent all chess pieces, e.g. "KING".
+ * Represents all chess pieces, e.g. "KING".
  *
  * @author Azizbek Toshpulatov
  */
 public enum PieceType {
-    KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN
+    KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN, DRAUGHTS_MAN
 }
