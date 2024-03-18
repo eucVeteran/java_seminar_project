@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @author Azizbek Toshpulatov
  */
-public class Piece {
+public class Piece implements Prototype {
     private static final AtomicLong ID_VALUES = new AtomicLong(0);
 
     private final Color color;
@@ -24,6 +24,30 @@ public class Piece {
     public Piece(Color color, PieceType pieceType) {
         this.color = color;
         this.pieceType = pieceType;
+    }
+
+    /**
+     * Creates a copied instance of another piece, but ID is unique.
+     *
+     * @param pattern another piece to be cloned.
+     */
+    public Piece(Piece pattern) {
+        this(pattern.color, pattern.pieceType);
+    }
+
+    @Override
+    public Piece makeClone() {
+        return new Piece(this);
+    }
+
+    /**
+     * Return a first letter of a piece type, e.g. KING => "K".
+     *
+     * @return a first letter of a piece type.
+     */
+    @Override
+    public String toString() {
+        return String.valueOf(pieceType.toString().charAt(0));
     }
 
     public Color getColor() {

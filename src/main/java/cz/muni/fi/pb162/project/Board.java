@@ -23,7 +23,7 @@ public class Board {
     }
 
     /**
-     * Constructs a board with a default size of 8.
+     * Constructs a board with a default size of {@link Board#DEF_SIZE}.
      */
     public Board() {
         this(DEF_SIZE);
