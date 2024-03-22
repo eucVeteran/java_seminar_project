@@ -1,136 +1,117 @@
 # PB162 seminar project
 
 ## Objectives
-* State of objects.
-* Simple inheritance and polymorphism. Overridden methods.
-* Alternate ways to object's construction (prototyping).
-* Implementation of existing interface and interface definition.
+* Abstract classes and methods.
 
 ## Tasks
 Unless otherwise instructed, create new classes/enums/records in the `cz.muni.fi.pb162.project` package.
 
-1. Create the `Game` class representing a gameplay of two players.
-    - Each game is played by two players (name the corresponding attributes `playerOne` and `playerTwo`) on 
-      the board of size 8x8. Neither the player nor the board is changed during the game. The players and the board are 
-      set in a constructor with players provided as input parameters.
-      We assume that one player (not necessarily the first one) is "white", while another is "black". But the correctness
-      of their state is not checked right now (we will do it later).
-    - Every game has a state which gains one of the following values: "white player win", "black player win", "pat", 
-      and "playing". The initial game state is "playing". Define these states as predefined `StateOfGame` values. 
-      Arrange that if the value is used in the context of text strings, then lowercase letters are printed.
-    - A game has the ability to count rounds, starting with zero, i.e., the first round is 0, the second 1, etc.
-      For now, add only the appropriate attribute. Later on, we will introduce a method that will increment rounds 
-      during the gameplay.
-    - Add the `getCurrentPlayer` method, which returns the player whose turn it is
-        - The white player always starts, i.e., even rounds are of the white player, while odd rounds belong to the 
-          black player.
-        - Players take turns regularly.
-          > Use the "modulo" operator to transform rounds into even (0) or odd (1) numbers.
-    - Mark attributes that never change as **final**. Add getters.
-      Add setters for attributes that can be changed during the gameplay by external code.
-      In general, prefer encapsulation over openness.
-2. Update the `Piece` class:
-   - Override the `toString` method to return the first letter of `pieceType`.
-     > How is it possible to talk about "overriding" when the `Piece` class does not extend any other class?
-   - Implement the `Prototype` interface so that our class will follow the so-called 
-     [Prototype design pattern](https://refactoring.guru/design-patterns/prototype) - an alternate way of creating 
-     an object by cloning an existing object (with possibly changed state).
-     - Introduce an overloaded _copy constructor_ into the class. The new piece will have the same attributes except 
-       for the `id` that will be set unique. 
-     - Implement the required method using the copy constructor.
-       - Think about the difference between cloning a piece by calling the copy constructor and cloning the piece
-         via `makeClone()` method.
-       > HINT: Consider polymorphism. Assume that an instance of `SpecificPiece extends Piece` is retyped to `Piece`.
-       > Calling the overridden `makeClone()` on this object produces an object of type `SpecificPiece`.
-       > On the contrary, if you want to use the copy constructor, then ou have to know whether to call 
-       > the copy constructor of `Piece` or `SpecificPiece`.
-     - Discuss whether it is necessary to override the `makeClone()` method in subclasses.
-       > HINT: Yes. The reason is suggested in the previous hint :-)
-     - Discuss what is the better decomposition for distinguishing types of pieces.
-       - Option (a): A single class is defined with the `pieceType` attribute (i.e., our approach). 
-       - Option (b): The `Piece` class has no `pieceType` attribute. Subclasses like `King extends Piece`
-         are introduced instead.
-       > HINT: What would you prefer if there are no differences in the state (attributes) among piece types?
-       > What if some piece type needs a specific attribute? What if a piece type has a specific behavior, e.g., 
-       > specific moves? In this case, the approach (a) with a single class may lead to if-else branches with code 
-       > specific to the piece type, while (b) supports better maintainability because the specific behavior can be 
-       > located in the overridden method and then implemented without modifying other classes.
-3. Introduce `Chess` and `Draughts` types of `Game`.
-    - Create these classes and use inheritance between `Chess`, `Draughts`, and `Game`. Choose carefully the class hierarchy.
-      Use private attributes, avoid attribute overriding!
-      > Review rules for inheritance/polymorphism and rules for constructors of subclasses.
-    - Add the `setInitialSet()` method, which sets the initial layout of the pieces on the chess board,
-      either for [chess game](https://en.wikipedia.org/wiki/Rules_of_chess#Initial_setup) or
-      for [draughts played on chess board](https://en.wikipedia.org/wiki/English_draughts).
-      This method is implemented in the corresponding subclasses and called automatically from constructors (nowhere else).
-      Use the sample code below - modify it if necessary.
-      > Discuss why this method should be private or final.
-4. Create a new `Playable` **interface** introducing a single well-documented method.
-    - The `void move(Position oldPosition, Position newPosition)` method moves the piece from the old position to the 
-      new position on the board. If there is no piece at the source position or the positions are wrong, then the 
-      method does nothing (this is not the best reaction to failure, but we will repair it later).
-    - Make the `Game` implementing this interface.
-
-## Chess layout
-```java
-    private void setInitialSet() {
-        getBoard().putPieceOnBoard(new Position('e', 1), new Piece(Color.WHITE, PieceType.KING));
-        getBoard().putPieceOnBoard(new Position('d', 1), new Piece(Color.WHITE, PieceType.QUEEN));
-        getBoard().putPieceOnBoard(new Position('a', 1), new Piece(Color.WHITE, PieceType.ROOK));
-        getBoard().putPieceOnBoard(new Position('h', 1), new Piece(Color.WHITE, PieceType.ROOK));
-        getBoard().putPieceOnBoard(new Position('b', 1), new Piece(Color.WHITE, PieceType.KNIGHT));
-        getBoard().putPieceOnBoard(new Position('g', 1), new Piece(Color.WHITE, PieceType.KNIGHT));
-        getBoard().putPieceOnBoard(new Position('c', 1), new Piece(Color.WHITE, PieceType.BISHOP));
-        getBoard().putPieceOnBoard(new Position('f', 1), new Piece(Color.WHITE, PieceType.BISHOP));
-
-        getBoard().putPieceOnBoard(new Position('e', 8), new Piece(Color.BLACK, PieceType.KING));
-        getBoard().putPieceOnBoard(new Position('d', 8), new Piece(Color.BLACK, PieceType.QUEEN));
-        getBoard().putPieceOnBoard(new Position('a', 8), new Piece(Color.BLACK, PieceType.ROOK));
-        getBoard().putPieceOnBoard(new Position('h', 8), new Piece(Color.BLACK, PieceType.ROOK));
-        getBoard().putPieceOnBoard(new Position('b', 8), new Piece(Color.BLACK, PieceType.KNIGHT));
-        getBoard().putPieceOnBoard(new Position('g', 8), new Piece(Color.BLACK, PieceType.KNIGHT));
-        getBoard().putPieceOnBoard(new Position('c', 8), new Piece(Color.BLACK, PieceType.BISHOP));
-        getBoard().putPieceOnBoard(new Position('f', 8), new Piece(Color.BLACK, PieceType.BISHOP));
-
-        for (int i = 0; i < getBoard().getSize(); i++) {
-            getBoard().putPieceOnBoard(new Position(i, 1), new Piece(Color.WHITE, PieceType.PAWN));
-            getBoard().putPieceOnBoard(new Position(i, 6), new Piece(Color.BLACK, PieceType.PAWN));
-        }
-    }
+1. Extend the functionality of the `Game.move()` method. Actually, the method moves a piece from one 
+   position to another one. However, we want to detect and support so-called **promotion**.
+   During a chess game, if the moved piece is a pawn and is to be placed on the last (opposite) line of the board, 
+   then the piece turns into a queen. During a draughts game, if the moved piece is a man and is to be placed 
+   on the last (opposite) line of the board, then the man is replaced with a king.
+   - Extend the functionality of the `move` method so that it is able to detect promotion in chess and draughts. 
+     Put a specific code to subclasses, leave the common code in the `Game` class, and re-use it.
+2. Add an `updateStatus` method to desktop games. The method aims to check whether the game has finished and then 
+   change the status (the winner) of the game appropriately.
+   - This method must be implemented in all games. On the other hand, the implementation differs in specific
+     games. Your goal is to enforce the presence (implementation) of the method in the specific game while
+     providing no default implementation (as it does not exist).
+     > Review abstract methods and classes.
+   - Add a public `getAllPiecesFromBoard()` method to the `Board` that returns the array of all pieces lying on the board.
+     Use this method to implement the `updateStatus`.
+   - For chess, the game ends if there is only one king on the board.
+   - For draughts, the game ends if there are no pieces of white or black color on the board.
+   - The `updateStatus` method is meant to be used by only the `Game` class and their subclasses. 
+     Therefore, choose the correct visibility.
+     > Can the method be declared private?
+3. Add the `void play()` method into the `Playable` interface. This method aims to demonstrate the gameplay.
+   - It loops until the end of the game. 
+   - In each loop, it finds out which player is next, gets input from the player (from standard input), 
+     increases the round by one, and makes a move. Also, the state of the game is updated automatically
+     (see the `updateStatus`).
+   - The input from the user consists of a board position from which (s)he wants to move the piece
+     and a position to which (s)he wants to move the piece. For example:
+     ```
+     a2 a3
+     ```
+   - For reading user input, use the following *private constant* and *non-public method*.
+     Set proper visibility and scope. Study the code and discuss unclear aspects with your tutor.
+      ```java
+      Scanner SCANNER = new Scanner(System.in);
+      
+      private Position getInputFromPlayer() {
+         var position = SCANNER.next().trim();
+         char column = position.charAt(0);
+         int line = Integer.parseInt(String.valueOf(position.charAt(1)));
+         return new Position(column, line);
+      }
+      ```
+      > Note that the `play` method in the `Game` class can invoke the `updateStatus` method, which
+        is abstract in the class. The `play` method is so-called 
+        [template method](https://en.wikipedia.org/wiki/Template_method_pattern).
+4. Overload the `toString` method of the `Board` so that it returns the current 
+   layout of pieces on the board.
+    - Use `StringBuilder` instead of adding strings using the plus sign.
+    - **Use `System.lineSeparator()` instead of `\n`.**
+    - Update the `Main` class so that it instantiates chess and draughts games and prints 
+      the layout of their initial board. Check the output that should look like follows:
 ```
-
-## Draughts layout
-```java
-    private void setInitialSet() {
-        for (int i = 0; i < getBoard().getSize(); i += 2) {
-            getBoard().putPieceOnBoard(new Position(i, 0), new Piece(Color.WHITE, PieceType.DRAUGHTS_MAN));
-            getBoard().putPieceOnBoard(new Position(i, 2), new Piece(Color.WHITE, PieceType.DRAUGHTS_MAN));
-            getBoard().putPieceOnBoard(new Position(i, 6), new Piece(Color.BLACK, PieceType.DRAUGHTS_MAN));
-        }
-        for (int i = 1; i < getBoard().getSize(); i += 2) {
-            getBoard().putPieceOnBoard(new Position(i, 1), new Piece(Color.WHITE, PieceType.DRAUGHTS_MAN));
-            getBoard().putPieceOnBoard(new Position(i, 5), new Piece(Color.BLACK, PieceType.DRAUGHTS_MAN));
-            getBoard().putPieceOnBoard(new Position(i, 7), new Piece(Color.BLACK, PieceType.DRAUGHTS_MAN));
-        }
-    }
+    A   B   C   D   E   F   G   H 
+  --------------------------------
+8 | R | K | B | Q | K | B | K | R |
+  --------------------------------
+7 | P | P | P | P | P | P | P | P |
+  --------------------------------
+6 |   |   |   |   |   |   |   |   |
+  --------------------------------
+5 |   |   |   |   |   |   |   |   |
+  --------------------------------
+4 |   |   |   |   |   |   |   |   |
+  --------------------------------
+3 |   |   |   |   |   |   |   |   |
+  --------------------------------
+2 | P | P | P | P | P | P | P | P |
+  --------------------------------
+1 | R | K | B | Q | K | B | K | R |
+  --------------------------------
+```
+```
+    A   B   C   D   E   F   G   H 
+  --------------------------------
+8 |   | D |   | D |   | D |   | D |
+  --------------------------------
+7 | D |   | D |   | D |   | D |   |
+  --------------------------------
+6 |   | D |   | D |   | D |   | D |
+  --------------------------------
+5 |   |   |   |   |   |   |   |   |
+  --------------------------------
+4 |   |   |   |   |   |   |   |   |
+  --------------------------------
+3 | D |   | D |   | D |   | D |   |
+  --------------------------------
+2 |   | D |   | D |   | D |   | D |
+  --------------------------------
+1 | D |   | D |   | D |   | D |   |
+  --------------------------------
 ```
 
 ## Takeaways
-* If a class cannot be immutable, use at least `final` attributes whenever possible to 
-  prevent their unintentional modification. But be aware that the state of even a non-primitive final
-  attribute can be modified if the object referenced by the attribute is not immutable!
-  Therefore, the protection is only partial.
-* Never override (repeat) attributes from super-classes in subclasses. Use public, protected, and private 
-  methods to access or modify them.
-* A constructor of a subclass must always call a constructor of its super-class.
-* There are alternate ways of constructing an object than just calling their constructors, e.g., cloning. 
-  See the [creational design patterns](https://en.wikipedia.org/wiki/Creational_pattern) for more 
-  construction strategies.
-* Interfaces are either implemented (by one or more classes) or used (we will practice next week).
-* Interfaces must be precisely documented.
+* Make methods public only if they are really needed by external code. As soon as you make 
+  a method public, it is very difficult to remove or modify it. Moreover, unnecessary public methods
+  can increase the complexity of dependencies among objects, making the system less maintainable.
+* Make methods private only if you want to protect them from being used in subclasses. A special
+  case is if they are invoked from constructors (recall the discussion in the previous iteration).
+* Make a method abstract (either public or protected) if you want to enforce its implementation
+  in subclasses. See also the [template method](https://en.wikipedia.org/wiki/Template_method_pattern)
+  design pattern to learn more about the possible usage.
+* Note: A final method cannot be overridden. A final class cannot be extended (i.e., record is the final class).
 
 ## Features to be manually checked by tutors 
-* Javadoc. Especially in the `Playable` interface and various constructors.
-* Call of `this()` in the copy constructor of `Piece`.
-* The use of the `final` keyword set setters in the `Game`.
-* The use of `@Override` in the `Game.move` method.
+* JavaDoc `Playable.play`
+* The usage of `equals()` in `move()`
+* Abstract and protected `updateStatus` in the `Game`
+* Private static final scanner
+* The logic in the `play()` method

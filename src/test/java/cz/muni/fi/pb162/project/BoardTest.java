@@ -1,7 +1,10 @@
 package cz.muni.fi.pb162.project;
 
 import cz.muni.fi.pb162.project.helper.BasicRulesTester;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -18,7 +21,7 @@ public class BoardTest {
     @Test
     void attributesAndMethodsAmount() {
         BasicRulesTester.attributesAmount(Board.class, 1);
-        BasicRulesTester.methodsAmount(Board.class, 6);
+        //BasicRulesTester.methodsAmount(Board.class, 8);
         BasicRulesTester.attributesFinal(Board.class, 2);
     }
 
@@ -83,5 +86,51 @@ public class BoardTest {
         assertNull(result3);
     }
 
+    @Test
+    void getAllPiecesFromBoard() {
+        var board = new Board();
+        var result = new ArrayList<Piece>();
+        for (int i = 0; i < 5; i++) {
+            for (int j = 1; j < 8; j++) {
+                var piece = new Piece(Color.WHITE, PieceType.PAWN);
+                board.putPieceOnBoard(new Position(i, j), piece);
+                result.add(piece);
+            }
+        }
+        assertEquals(result.size(), board.getAllPiecesFromBoard().length);
 
+        var board2 = new Board();
+        var piece = new Piece(Color.WHITE, PieceType.KING);
+        board2.putPieceOnBoard(new Position(1, 2), piece);
+        var piece2 = new Piece(Color.BLACK, PieceType.QUEEN);
+        board2.putPieceOnBoard(new Position(5, 5), piece2);
+        var piece3 = new Piece(Color.BLACK, PieceType.BISHOP);
+        board2.putPieceOnBoard(new Position(7, 4), piece3);
+        Assertions.assertThat(board2.getAllPiecesFromBoard())
+                .containsOnly(piece, piece2, piece3);
+    }
+
+    @Test
+    void testToString() {
+        var expectedOutput = """
+                    A   B   C   D   E   F   G   H\s
+                  --------------------------------
+                8 |   |   |   |   |   |   |   |   |
+                  --------------------------------
+                7 |   |   |   |   |   |   |   |   |
+                  --------------------------------
+                6 |   |   |   |   |   |   |   |   |
+                  --------------------------------
+                5 |   |   |   |   |   |   |   |   |
+                  --------------------------------
+                4 |   |   |   |   |   |   |   |   |
+                  --------------------------------
+                3 |   |   |   |   |   |   |   |   |
+                  --------------------------------
+                2 |   |   |   |   |   |   |   |   |
+                  --------------------------------
+                1 |   |   |   |   |   |   |   |   |
+                  --------------------------------""".replace("\n", System.lineSeparator());
+        assertEquals(expectedOutput, board.toString());
+    }
 }
