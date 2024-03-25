@@ -14,4 +14,9 @@ public interface Playable {
      * @param newPosition new position.
      */
     void move(Position oldPosition, Position newPosition);
+
+    /**
+     * Demonstrates the game until the game is ended.
+     */
+    void play();
 }

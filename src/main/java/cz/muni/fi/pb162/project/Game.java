@@ -1,5 +1,7 @@
 package cz.muni.fi.pb162.project;
 
+import java.util.Scanner;
+
 /**
  * Represents a game of two players.
  * Each game is played by two players on the board of size {@link Board#DEF_SIZE} x {@link Board#DEF_SIZE}.
@@ -7,7 +9,7 @@ package cz.muni.fi.pb162.project;
  *
  * @author Azizbek Toshpulatov
  */
-public class Game implements Playable {
+public abstract class Game implements Playable {
     private final Player playerOne;
     private final Player playerTwo;
     private final Board board;
@@ -43,6 +45,37 @@ public class Game implements Playable {
         board.putPieceOnBoard(oldPosition, null);
         board.putPieceOnBoard(newPosition, piece);
     }
+
+    // returns a new position object from a user input. 0 is from, 3 is to.
+    private Position getInputFromPlayer(int i) {
+        Scanner scanner = new Scanner(System.in);
+        var position = scanner.next().trim();
+        char column = position.charAt(i);
+        int line = Integer.parseInt(String.valueOf(position.charAt(i + 1)));
+        return new Position(column, line);
+    }
+
+    /**
+     * Demonstrates the gameplay. It loops until the game is ended.
+     * Each loop it finds out which player is next, increases the round by one
+     * and makes a move. The state of the game is updated automatically ({@link Game#updateStatus()}).
+     */
+    @Override
+    public void play() {
+        Position from = getInputFromPlayer(0);
+        Position to = getInputFromPlayer(3);
+        move(from, to);
+        round++;
+
+        if (stateOfGame == StateOfGame.PLAYING) {
+            play();
+        }
+    }
+
+    /**
+     * Checks whether the game has finished and then changes the status (the winner) of the game appropriately.
+     */
+    public abstract void updateStatus();
 
     /**
      * Returns the player whose turn it is.
