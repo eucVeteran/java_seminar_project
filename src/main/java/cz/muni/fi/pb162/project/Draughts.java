@@ -1,6 +1,11 @@
 package cz.muni.fi.pb162.project;
 
-import static cz.muni.fi.pb162.project.PieceType.*;
+import static cz.muni.fi.pb162.project.Color.BLACK;
+import static cz.muni.fi.pb162.project.Color.WHITE;
+import static cz.muni.fi.pb162.project.PieceType.DRAUGHTS_KING;
+import static cz.muni.fi.pb162.project.PieceType.DRAUGHTS_MAN;
+import static cz.muni.fi.pb162.project.StateOfGame.BLACK_PLAYER_WIN;
+import static cz.muni.fi.pb162.project.StateOfGame.WHITE_PLAYER_WIN;
 
 /**
  * Represent a game of draughts.
@@ -31,9 +36,8 @@ public class Draughts extends Game {
     @Override
     public void move(Position oldPosition, Position newPosition) {
         Piece currentPiece = getBoard().getPiece(oldPosition);
-        if ((((newPosition.line() + 1 == getBoard().getSize()) && (currentPiece.getColor() == Color.WHITE)) ||
-                ((newPosition.line() == 0) && (currentPiece.getColor() == Color.BLACK)))
-                && (currentPiece.getPieceType() == DRAUGHTS_MAN)) {
+
+        if (inTheEnd(newPosition, currentPiece) && currentPiece.getPieceType() == DRAUGHTS_MAN) {
             getBoard().putPieceOnBoard(oldPosition, new Piece(currentPiece.getColor(), DRAUGHTS_KING));
         }
 
@@ -51,7 +55,7 @@ public class Draughts extends Game {
         Piece[] allPieces = getBoard().getAllPiecesFromBoard();
 
         for (Piece currentPiece : allPieces) {
-            if (currentPiece.getColor() == Color.WHITE) {
+            if (currentPiece.getColor() == WHITE) {
                 whites++;
             } else {
                 blacks++;
@@ -59,9 +63,9 @@ public class Draughts extends Game {
         }
 
         if (blacks == 0) {
-            setStateOfGame(StateOfGame.WHITE_PLAYER_WIN);
+            setStateOfGame(WHITE_PLAYER_WIN);
         } else if (whites == 0) {
-            setStateOfGame(StateOfGame.BLACK_PLAYER_WIN);
+            setStateOfGame(BLACK_PLAYER_WIN);
         }
     }
 
@@ -70,14 +74,14 @@ public class Draughts extends Game {
      */
     private void setInitialSet() {
         for (int i = 0; i < getBoard().getSize(); i += 2) {
-            getBoard().putPieceOnBoard(new Position(i, 0), new Piece(Color.WHITE, PieceType.DRAUGHTS_MAN));
-            getBoard().putPieceOnBoard(new Position(i, 2), new Piece(Color.WHITE, PieceType.DRAUGHTS_MAN));
-            getBoard().putPieceOnBoard(new Position(i, 6), new Piece(Color.BLACK, PieceType.DRAUGHTS_MAN));
+            getBoard().putPieceOnBoard(new Position(i, 0), new Piece(WHITE, DRAUGHTS_MAN));
+            getBoard().putPieceOnBoard(new Position(i, 2), new Piece(WHITE, DRAUGHTS_MAN));
+            getBoard().putPieceOnBoard(new Position(i, 6), new Piece(BLACK, DRAUGHTS_MAN));
         }
         for (int i = 1; i < getBoard().getSize(); i += 2) {
-            getBoard().putPieceOnBoard(new Position(i, 1), new Piece(Color.WHITE, PieceType.DRAUGHTS_MAN));
-            getBoard().putPieceOnBoard(new Position(i, 5), new Piece(Color.BLACK, PieceType.DRAUGHTS_MAN));
-            getBoard().putPieceOnBoard(new Position(i, 7), new Piece(Color.BLACK, PieceType.DRAUGHTS_MAN));
+            getBoard().putPieceOnBoard(new Position(i, 1), new Piece(WHITE, DRAUGHTS_MAN));
+            getBoard().putPieceOnBoard(new Position(i, 5), new Piece(BLACK, DRAUGHTS_MAN));
+            getBoard().putPieceOnBoard(new Position(i, 7), new Piece(BLACK, DRAUGHTS_MAN));
         }
     }
 }

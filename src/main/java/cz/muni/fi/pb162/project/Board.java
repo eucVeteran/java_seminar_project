@@ -87,37 +87,59 @@ public class Board {
     }
 
     /**
-     * @return Returns the current layout of pieces on the board.
+     * Returns the current layout of pieces on the board.
+     *
+     * @return the current layout of pieces on the board.
      */
     @Override
     public String toString() {
         var result = new StringBuilder();
-        for (int i = 0; i < getSize() + 1; i++) {
-            if (i == 0) {
-                result.append(' ');
-                for (int j = 0; j < getSize(); j++) {
-                    char letter = (char) ('A' + j);
-                    result.append("   ").append(letter);
+
+        letterColumns(result);
+        addRestLayout(result);
+
+        return result.toString();
+    }
+
+    /**
+     * Helper for {@link Board#toString()}.
+     * Adds top of the board, i.e. letters of columns.
+     *
+     * @param result not completed layout with completed first line.
+     */
+    private void letterColumns(StringBuilder result) {
+        result.append(' ');
+        for (int j = 0; j < getSize(); j++) {
+            char letter = (char) ('A' + j);
+            result.append("   ").append(letter);
+        }
+        result.append(' ').append(System.lineSeparator());
+        result.append("  ").append("----".repeat(getSize())).append(System.lineSeparator());
+    }
+
+    /**
+     * Helper for {@link Board#toString()}.
+     * Adds rest of the board, i.e. line numbers, board squares, pieces.
+     *
+     * @param result completed layout of a board.
+     */
+    private void addRestLayout(StringBuilder result) {
+        for (int i = 1; i < getSize() + 1; i++) {
+            int line = getSize() + 1 - i;
+            result.append(getSize() - i + 1).append(" |");
+            for (int j = 0; j < getSize(); j++) {
+                var currentPiece = getPiece(new Position(j, line - 1));
+                if (currentPiece != null) {
+                    result.append(' ').append(currentPiece);
+                } else {
+                    result.append("  ");
                 }
-                result.append(' ').append(System.lineSeparator());
-            } else {
-                int line = getSize() + 1 - i;
-                result.append(getSize() - i + 1).append(" |");
-                for (int j = 0; j < getSize(); j++) {
-                    var currentPiece = getPiece(new Position(j, line - 1));
-                    if (currentPiece != null) {
-                        result.append(' ').append(currentPiece);
-                    } else {
-                        result.append("  ");
-                    }
-                    result.append(" |");
-                }
-                result.append(System.lineSeparator());
+                result.append(" |");
             }
+            result.append(System.lineSeparator());
             result.append("  ").append("----".repeat(getSize())).append(System.lineSeparator());
         }
         result.deleteCharAt(result.length() - 1);
-        return result.toString();
     }
 
     /**

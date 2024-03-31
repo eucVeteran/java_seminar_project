@@ -1,6 +1,15 @@
 package cz.muni.fi.pb162.project;
 
-import static cz.muni.fi.pb162.project.PieceType.*;
+import static cz.muni.fi.pb162.project.Color.WHITE;
+import static cz.muni.fi.pb162.project.Color.BLACK;
+import static cz.muni.fi.pb162.project.PieceType.KING;
+import static cz.muni.fi.pb162.project.PieceType.QUEEN;
+import static cz.muni.fi.pb162.project.PieceType.ROOK;
+import static cz.muni.fi.pb162.project.PieceType.KNIGHT;
+import static cz.muni.fi.pb162.project.PieceType.BISHOP;
+import static cz.muni.fi.pb162.project.PieceType.PAWN;
+import static cz.muni.fi.pb162.project.StateOfGame.BLACK_PLAYER_WIN;
+import static cz.muni.fi.pb162.project.StateOfGame.WHITE_PLAYER_WIN;
 
 /**
  * Represent a game of chess.
@@ -32,9 +41,8 @@ public class Chess extends Game {
     @Override
     public void move(Position oldPosition, Position newPosition) {
         Piece currentPiece = getBoard().getPiece(oldPosition);
-        if ((((newPosition.line() + 1 == getBoard().getSize()) && (currentPiece.getColor() == Color.WHITE)) ||
-                ((newPosition.line() == 0) && (currentPiece.getColor() == Color.BLACK)))
-                && (currentPiece.getPieceType() == PAWN)) {
+
+        if (inTheEnd(newPosition, currentPiece) && currentPiece.getPieceType() == PAWN) {
             getBoard().putPieceOnBoard(oldPosition, new Piece(currentPiece.getColor(), QUEEN));
         }
 
@@ -53,7 +61,7 @@ public class Chess extends Game {
 
         for (Piece currentPiece : allPieces) {
             if (currentPiece.getPieceType() == KING) {
-                if (currentPiece.getColor() == Color.WHITE) {
+                if (currentPiece.getColor() == WHITE) {
                     whiteKing = true;
                 } else {
                     blackKing = true;
@@ -62,9 +70,9 @@ public class Chess extends Game {
         }
 
         if (!whiteKing) {
-            setStateOfGame(StateOfGame.BLACK_PLAYER_WIN);
+            setStateOfGame(BLACK_PLAYER_WIN);
         } else if (!blackKing) {
-            setStateOfGame(StateOfGame.WHITE_PLAYER_WIN);
+            setStateOfGame(WHITE_PLAYER_WIN);
         }
     }
 
@@ -72,27 +80,27 @@ public class Chess extends Game {
      * Sets initial pieces of the game.
      */
     private void setInitialSet() {
-        getBoard().putPieceOnBoard(new Position('e', 1), new Piece(Color.WHITE, PieceType.KING));
-        getBoard().putPieceOnBoard(new Position('d', 1), new Piece(Color.WHITE, PieceType.QUEEN));
-        getBoard().putPieceOnBoard(new Position('a', 1), new Piece(Color.WHITE, PieceType.ROOK));
-        getBoard().putPieceOnBoard(new Position('h', 1), new Piece(Color.WHITE, PieceType.ROOK));
-        getBoard().putPieceOnBoard(new Position('b', 1), new Piece(Color.WHITE, PieceType.KNIGHT));
-        getBoard().putPieceOnBoard(new Position('g', 1), new Piece(Color.WHITE, PieceType.KNIGHT));
-        getBoard().putPieceOnBoard(new Position('c', 1), new Piece(Color.WHITE, PieceType.BISHOP));
-        getBoard().putPieceOnBoard(new Position('f', 1), new Piece(Color.WHITE, PieceType.BISHOP));
+        getBoard().putPieceOnBoard(new Position('e', 1), new Piece(WHITE, KING));
+        getBoard().putPieceOnBoard(new Position('d', 1), new Piece(WHITE, QUEEN));
+        getBoard().putPieceOnBoard(new Position('a', 1), new Piece(WHITE, ROOK));
+        getBoard().putPieceOnBoard(new Position('h', 1), new Piece(WHITE, ROOK));
+        getBoard().putPieceOnBoard(new Position('b', 1), new Piece(WHITE, KNIGHT));
+        getBoard().putPieceOnBoard(new Position('g', 1), new Piece(WHITE, KNIGHT));
+        getBoard().putPieceOnBoard(new Position('c', 1), new Piece(WHITE, BISHOP));
+        getBoard().putPieceOnBoard(new Position('f', 1), new Piece(WHITE, BISHOP));
 
-        getBoard().putPieceOnBoard(new Position('e', 8), new Piece(Color.BLACK, PieceType.KING));
-        getBoard().putPieceOnBoard(new Position('d', 8), new Piece(Color.BLACK, PieceType.QUEEN));
-        getBoard().putPieceOnBoard(new Position('a', 8), new Piece(Color.BLACK, PieceType.ROOK));
-        getBoard().putPieceOnBoard(new Position('h', 8), new Piece(Color.BLACK, PieceType.ROOK));
-        getBoard().putPieceOnBoard(new Position('b', 8), new Piece(Color.BLACK, PieceType.KNIGHT));
-        getBoard().putPieceOnBoard(new Position('g', 8), new Piece(Color.BLACK, PieceType.KNIGHT));
-        getBoard().putPieceOnBoard(new Position('c', 8), new Piece(Color.BLACK, PieceType.BISHOP));
-        getBoard().putPieceOnBoard(new Position('f', 8), new Piece(Color.BLACK, PieceType.BISHOP));
+        getBoard().putPieceOnBoard(new Position('e', 8), new Piece(BLACK, KING));
+        getBoard().putPieceOnBoard(new Position('d', 8), new Piece(BLACK, QUEEN));
+        getBoard().putPieceOnBoard(new Position('a', 8), new Piece(BLACK, ROOK));
+        getBoard().putPieceOnBoard(new Position('h', 8), new Piece(BLACK, ROOK));
+        getBoard().putPieceOnBoard(new Position('b', 8), new Piece(BLACK, KNIGHT));
+        getBoard().putPieceOnBoard(new Position('g', 8), new Piece(BLACK, KNIGHT));
+        getBoard().putPieceOnBoard(new Position('c', 8), new Piece(BLACK, BISHOP));
+        getBoard().putPieceOnBoard(new Position('f', 8), new Piece(BLACK, BISHOP));
 
         for (int i = 0; i < getBoard().getSize(); i++) {
-            getBoard().putPieceOnBoard(new Position(i, 1), new Piece(Color.WHITE, PAWN));
-            getBoard().putPieceOnBoard(new Position(i, 6), new Piece(Color.BLACK, PAWN));
+            getBoard().putPieceOnBoard(new Position(i, 1), new Piece(WHITE, PAWN));
+            getBoard().putPieceOnBoard(new Position(i, 6), new Piece(BLACK, PAWN));
         }
     }
 }

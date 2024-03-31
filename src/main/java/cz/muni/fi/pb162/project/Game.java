@@ -2,6 +2,10 @@ package cz.muni.fi.pb162.project;
 
 import java.util.Scanner;
 
+import static cz.muni.fi.pb162.project.Color.BLACK;
+import static cz.muni.fi.pb162.project.Color.WHITE;
+import static cz.muni.fi.pb162.project.StateOfGame.PLAYING;
+
 /**
  * Represents a game of two players.
  * Each game is played by two players on the board of size {@link Board#DEF_SIZE} x {@link Board#DEF_SIZE}.
@@ -13,8 +17,9 @@ public abstract class Game implements Playable {
     private final Player playerOne;
     private final Player playerTwo;
     private final Board board;
-    private StateOfGame stateOfGame = StateOfGame.PLAYING;
+    private StateOfGame stateOfGame = PLAYING;
     private int round = 0;
+    private static final Scanner SCANNER = new Scanner(System.in);
 
     /**
      * Constructs a game with 2 players and a board of size {@link Board#DEF_SIZE} x {@link Board#DEF_SIZE}.
@@ -46,36 +51,52 @@ public abstract class Game implements Playable {
         board.putPieceOnBoard(newPosition, piece);
     }
 
-    // returns a new position object from a user input. 0 is from, 3 is to.
-    private Position getInputFromPlayer(int i) {
-        Scanner scanner = new Scanner(System.in);
-        var position = scanner.next().trim();
-        char column = position.charAt(i);
-        int line = Integer.parseInt(String.valueOf(position.charAt(i + 1)));
-        return new Position(column, line);
+    /**
+     * Returns {@code true} if the piece is either on the first line or the last line.
+     *
+     * @param newPosition  new {@link Position}.
+     * @param currentPiece current {@link Piece}.
+     * @return {@code true} if the piece is either on the first line or the last line.
+     */
+    protected boolean inTheEnd(Position newPosition, Piece currentPiece) {
+        return (newPosition.line() + 1 == getBoard().getSize() && currentPiece.getColor() == WHITE) ||
+                (newPosition.line() == 0 && currentPiece.getColor() == BLACK);
     }
 
     /**
-     * Demonstrates the gameplay. It loops until the game is ended.
-     * Each loop it finds out which player is next, increases the round by one
-     * and makes a move. The state of the game is updated automatically ({@link Game#updateStatus()}).
+     * Returns input from a player, e.g. a2 => new {@link Position} object.
+     *
+     * @return input from a player, e.g. a2 => new {@link Position} object.
      */
+    private Position getInputFromPlayer() {
+        var position = SCANNER.next().trim();
+        char column = position.charAt(0);
+        int line = Integer.parseInt(String.valueOf(position.charAt(1)));
+        return new Position(column, line);
+    }
+
     @Override
     public void play() {
-        Position from = getInputFromPlayer(0);
-        Position to = getInputFromPlayer(3);
-        move(from, to);
-        round++;
+        while (stateOfGame == PLAYING) {
+            System.out.println("State of game: " + stateOfGame);
 
-        if (stateOfGame == StateOfGame.PLAYING) {
-            play();
+            Player currentPlayer = getCurrentPlayer();
+            System.out.println(currentPlayer.toString() + "'s turn.");
+
+            Position from = getInputFromPlayer();
+            Position to = getInputFromPlayer();
+
+            round++;
+            move(from, to);
+            updateStatus();
         }
+        System.out.println("Game is ended. " + stateOfGame.toString());
     }
 
     /**
      * Checks whether the game has finished and then changes the status (the winner) of the game appropriately.
      */
-    public abstract void updateStatus();
+    protected abstract void updateStatus();
 
     /**
      * Returns the player whose turn it is.
@@ -84,9 +105,9 @@ public abstract class Game implements Playable {
      */
     public Player getCurrentPlayer() {
         if (round % 2 == 0) {
-            return playerOne.color() == Color.WHITE ? playerOne : playerTwo;
+            return playerOne.color() == WHITE ? playerOne : playerTwo;
         }
-        return playerOne.color() == Color.BLACK ? playerOne : playerTwo;
+        return playerOne.color() == BLACK ? playerOne : playerTwo;
     }
 
     public StateOfGame getStateOfGame() {
