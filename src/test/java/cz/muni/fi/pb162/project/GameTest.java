@@ -13,7 +13,6 @@ public class GameTest {
     void abstractClass() {
         BasicRulesTester.testAbstractClass(Game.class);
     }
-
     @Test
     void inheritance() {
         BasicRulesTester.testInheritance(Playable.class, Game.class);

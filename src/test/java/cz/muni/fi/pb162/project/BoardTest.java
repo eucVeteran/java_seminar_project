@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -24,7 +25,6 @@ public class BoardTest {
         //BasicRulesTester.methodsAmount(Board.class, 8);
         BasicRulesTester.attributesFinal(Board.class, 2);
     }
-
     @Test
     void inheritance() {
         BasicRulesTester.testInheritance(Prototype.class, Piece.class);
@@ -133,4 +133,35 @@ public class BoardTest {
                   --------------------------------""".replace("\n", System.lineSeparator());
         assertEquals(expectedOutput, board.toString());
     }
+
+    @Test
+    void testEquals() {
+        assertThat(new Board()).isEqualTo(new Board());
+        var game = new Chess(null, null);
+        var game2 = new Chess(null, null);
+        assertThat(game.getBoard()).isEqualTo(game2.getBoard());
+        var board2 = new Board();
+        var piece = new Piece(Color.WHITE, PieceType.ROOK);
+        board.putPieceOnBoard(new Position(7, 1), piece);
+        board2.putPieceOnBoard(new Position(7, 1), piece);
+        assertThat(board).isEqualTo(board2);
+        board2.putPieceOnBoard(new Position(7, 1), new Piece(Color.BLACK, PieceType.ROOK));
+        assertThat(board).isNotEqualTo(board2);
+    }
+
+    @Test
+    void testHashCode() {
+        assertThat(new Board()).hasSameHashCodeAs(new Board());
+        var game = new Chess(null, null);
+        var game2 = new Chess(null, null);
+        assertThat(game.getBoard().hashCode()).hasSameHashCodeAs(game2.getBoard());
+        var board2 = new Board();
+        var piece = new Piece(Color.WHITE, PieceType.ROOK);
+        board.putPieceOnBoard(new Position(7, 1), piece);
+        board2.putPieceOnBoard(new Position(7, 1), piece);
+        assertThat(board).hasSameHashCodeAs(board2);
+        board2.putPieceOnBoard(new Position(7, 1), new Piece(Color.BLACK, PieceType.ROOK));
+        assertThat(board).doesNotHaveSameHashCodeAs(board2);
+    }
+
 }

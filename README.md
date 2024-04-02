@@ -1,117 +1,88 @@
 # PB162 seminar project
 
 ## Objectives
-* Abstract classes and methods.
+* Objects' identity (equality)
+* Generics
+* Nested classes
 
 ## Tasks
 Unless otherwise instructed, create new classes/enums/records in the `cz.muni.fi.pb162.project` package.
 
-1. Extend the functionality of the `Game.move()` method. Actually, the method moves a piece from one 
-   position to another one. However, we want to detect and support so-called **promotion**.
-   During a chess game, if the moved piece is a pawn and is to be placed on the last (opposite) line of the board, 
-   then the piece turns into a queen. During a draughts game, if the moved piece is a man and is to be placed 
-   on the last (opposite) line of the board, then the man is replaced with a king.
-   - Extend the functionality of the `move` method so that it is able to detect promotion in chess and draughts. 
-     Put a specific code to subclasses, leave the common code in the `Game` class, and re-use it.
-2. Add an `updateStatus` method to desktop games. The method aims to check whether the game has finished and then 
-   change the status (the winner) of the game appropriately.
-   - This method must be implemented in all games. On the other hand, the implementation differs in specific
-     games. Your goal is to enforce the presence (implementation) of the method in the specific game while
-     providing no default implementation (as it does not exist).
-     > Review abstract methods and classes.
-   - Add a public `getAllPiecesFromBoard()` method to the `Board` that returns the array of all pieces lying on the board.
-     Use this method to implement the `updateStatus`.
-   - For chess, the game ends if there is only one king on the board.
-   - For draughts, the game ends if there are no pieces of white or black color on the board.
-   - The `updateStatus` method is meant to be used by only the `Game` class and their subclasses. 
-     Therefore, choose the correct visibility.
-     > Can the method be declared private?
-3. Add the `void play()` method into the `Playable` interface. This method aims to demonstrate the gameplay.
-   - It loops until the end of the game. 
-   - In each loop, it finds out which player is next, gets input from the player (from standard input), 
-     increases the round by one, and makes a move. Also, the state of the game is updated automatically
-     (see the `updateStatus`).
-   - The input from the user consists of a board position from which (s)he wants to move the piece
-     and a position to which (s)he wants to move the piece. For example:
-     ```
-     a2 a3
-     ```
-   - For reading user input, use the following *private constant* and *non-public method*.
-     Set proper visibility and scope. Study the code and discuss unclear aspects with your tutor.
+1. Redefine equality of the following classes. You have to know the purpose and implementation principles. 
+   Therefore, don't use automatically generated code. Write the code manually.
+    - Two pieces are the same if they are of the same type and color (regardless of the `id`). 
+      Use `getClass()` for the implementation (to practice this approach).
+      > Review the relationship between the object's identity and hashing. Consider using `instanceof` vs. `getClass()`.
+    - Two boards are the same if they are the same size and the same pieces (type and color) are at the same positions.
+      > Study and use the `Arrays.equals` and `Arrays.deepEquals` methods.
+    - Two games are the same if the first and second players are the same.
+      Game state and board state do not matter.
+      Use JDK17+ `instanceof` syntax with a variable definition for the implementation (to practice this approach).
+2. The `Prototype` interface uses the `Piece` type. However, the interface is generic. It just aims to provide
+   a cloning method regardless of the returned type. Therefore, use _generics_ to refactor the interface so that
+   any type of object can be returned using the `makeClone` method. Update the `Piece` class correspondingly.
+   > Consider how easy or difficult it could be now to also make the `Board `cloneable, then the `Game`, etc.  
+
+So far, games like chess or draughts have been instantiated by a constructor that created an initial layout of the board.
+Since now, we'd like to enable a step-by-step creation of a game with the layout of pieces that can differ from 
+the standard initial layout. 
+
+Step-by-step creation of objects can be achieved by using the [Builder](https://en.wikipedia.org/wiki/Builder_pattern) 
+design pattern decomposition. Our product is a game (chess or draughts) with players and pieces on certain board positions.
+Director is the `Main` class that instructs builders to create desired games.
+Our goal is to implement builders for chess and draughts games.
+
+3. Create an abstract class `GameBuilder` with the following methods. Use generics so that instances of `Chess` and `Draughts` 
+can be finally obtained (or any other game introduced later).
+    - The `addPlayer(Player player)` method adds the first and then the second player to the game. The method returns `GameBuilder`
+      so that method calls can be chained. Add the following code to the `Main` class that demonstrates the usage:
       ```java
-      Scanner SCANNER = new Scanner(System.in);
-      
-      private Position getInputFromPlayer() {
-         var position = SCANNER.next().trim();
-         char column = position.charAt(0);
-         int line = Integer.parseInt(String.valueOf(position.charAt(1)));
-         return new Position(column, line);
-      }
+      var game = new Chess.Builder()
+              .addPlayer(new Player("Mat", Color.WHITE))
+              .addPlayer(new Player("Pat", Color.BLACK))
+              .addPieceToBoard(new Position('e', 1), new Piece(Color.WHITE, PieceType.KING))
+              .build();
+      System.out.println(game.getBoard());
       ```
-      > Note that the `play` method in the `Game` class can invoke the `updateStatus` method, which
-        is abstract in the class. The `play` method is so-called 
-        [template method](https://en.wikipedia.org/wiki/Template_method_pattern).
-4. Overload the `toString` method of the `Board` so that it returns the current 
-   layout of pieces on the board.
-    - Use `StringBuilder` instead of adding strings using the plus sign.
-    - **Use `System.lineSeparator()` instead of `\n`.**
-    - Update the `Main` class so that it instantiates chess and draughts games and prints 
-      the layout of their initial board. Check the output that should look like follows:
-```
-    A   B   C   D   E   F   G   H 
-  --------------------------------
-8 | R | K | B | Q | K | B | K | R |
-  --------------------------------
-7 | P | P | P | P | P | P | P | P |
-  --------------------------------
-6 |   |   |   |   |   |   |   |   |
-  --------------------------------
-5 |   |   |   |   |   |   |   |   |
-  --------------------------------
-4 |   |   |   |   |   |   |   |   |
-  --------------------------------
-3 |   |   |   |   |   |   |   |   |
-  --------------------------------
-2 | P | P | P | P | P | P | P | P |
-  --------------------------------
-1 | R | K | B | Q | K | B | K | R |
-  --------------------------------
-```
-```
-    A   B   C   D   E   F   G   H 
-  --------------------------------
-8 |   | D |   | D |   | D |   | D |
-  --------------------------------
-7 | D |   | D |   | D |   | D |   |
-  --------------------------------
-6 |   | D |   | D |   | D |   | D |
-  --------------------------------
-5 |   |   |   |   |   |   |   |   |
-  --------------------------------
-4 |   |   |   |   |   |   |   |   |
-  --------------------------------
-3 | D |   | D |   | D |   | D |   |
-  --------------------------------
-2 |   | D |   | D |   | D |   | D |
-  --------------------------------
-1 | D |   | D |   | D |   | D |   |
-  --------------------------------
-```
+    - The `addPieceToBoard(Position pos, Piece piece)` method adds the piece to the desired position of the board.
+      Again, method chaining has to be supported.
+    - The `build()` method returns either `Chess` or `Draughts` (or any other game). 
+      At this level of abstraction, we don't know what type of game to return. Therefore, the method can not be implemented.
+      We could use `Game` as the return type. However, more practical will be to use a generic type value. 
+      Therefore, use generics for the return type definition. 
+      > Discuss advantages and disadvantages of both approaches. Consider the manual retyping when the polymorphism 
+        of the `Game build()` variant is used. On the contrary, be aware that `GameBuilder<Chess>` and 
+        `GameBuilder<Draughts>` are independent types without any polymorphic relationship (their parent class 
+        is the `Object`).
+4. Implement specific builders for chess and draughts. The builders have to be created as **nested static classes**
+   utilizing the previous abstract class.
+    - Introduce constructors to the class hierarchy of games that take a board instance as an input parameter 
+      (current constructors instantiate a new board and set it into the initial game layout). 
+      Avoid unnecessary code duplicities.
+    - Ensure that the new constructors (with predefined board) are available only to game builders and not to external code!
+    > Discuss the advantages of defining specific builders as nested classes instead of standard external classes.
+    > Discuss the possibility and (dis)advantages of using static vs non-static internal classes.
 
 ## Takeaways
-* Make methods public only if they are really needed by external code. As soon as you make 
-  a method public, it is very difficult to remove or modify it. Moreover, unnecessary public methods
-  can increase the complexity of dependencies among objects, making the system less maintainable.
-* Make methods private only if you want to protect them from being used in subclasses. A special
-  case is if they are invoked from constructors (recall the discussion in the previous iteration).
-* Make a method abstract (either public or protected) if you want to enforce its implementation
-  in subclasses. See also the [template method](https://en.wikipedia.org/wiki/Template_method_pattern)
-  design pattern to learn more about the possible usage.
-* Note: A final method cannot be overridden. A final class cannot be extended (i.e., record is the final class).
+* Change also the `hashCode` method whenever the `equals` is changed!
+* For subclasses, there is no ideal implementation of `equals`. 
+  If you use the `getClass`, then objects are only equal to other objects of the same class, the same runtime type. 
+  It violates (a strict interpretation of) [Liskov substitution principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle).
+  On the other hand, the problem with the `instanceof` is that it breaks the "symmetry" contract of 
+  `Object.equals()` in that it becomes possible that `x.equals(y) == true` but `y.equals(x) == false`
+  `if x.getClass() != y.getClass()`.  
+* Generics are template classes or interfaces that internally deal with objects of a specified type. The type is specified either 
+  by the class implementing/extending generic interface/class or at runtime when the generics-based object is instantiated 
+  or a generics-based method is called.
+* Nested classes can improve access control and then preserve encapsulation (new constructors of the `Chess` and `Draughts`
+  can be protected yet still accessible for their builders) and organize code (builder-specific code is encapsulated in 
+  the special `GameBuilder` class and its subclasses).
 
 ## Features to be manually checked by tutors 
-* JavaDoc `Playable.play`
-* The usage of `equals()` in `move()`
-* Abstract and protected `updateStatus` in the `Game`
-* Private static final scanner
-* The logic in the `play()` method
+* In the equals/hashCode of the board, the size should not be checked if it's already checked by comparing arrays.
+  Also, no primes or random numbers should appear in the `hashCode`.
+* The hash code of `Piece` should use `getClass` while `Game` should use `instanceof` (to practice both approaches).
+* In the equals/hashCode of the game, you must use players only.
+* The usage of generics in the `Prototype` and `Piece`.
+* Protected/private constructors in the `Game`, `Chess`, and `Draughts`. 
+* Potentially duplicate code in the constructors fo the `Game`. 

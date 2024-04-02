@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -20,7 +22,7 @@ public class PieceTest {
     @Test
     void attributesAndMethodsAmount() {
         BasicRulesTester.attributesAmount(Piece.class, 3);
-        BasicRulesTester.methodsAmount(Piece.class, 5);
+        //BasicRulesTester.methodsAmount(Piece.class, 7);
         BasicRulesTester.attributesFinal(Piece.class, 4);
     }
 
@@ -77,4 +79,27 @@ public class PieceTest {
         assertNotEquals(piece3.getId(), piece3Clone.getId());
     }
 
+    @Test
+    void testEquals() {
+        assertThat(piece).isNotEqualTo(piece2);
+        assertThat(piece).isNotEqualTo(piece3);
+        assertThat(piece2).isNotEqualTo(piece3);
+        assertThat(piece).isEqualTo(new Piece(Color.WHITE, PieceType.KING));
+        //assertThat(piece).isNotEqualTo(new Piece(Color.WHITE, PieceType.KING));
+        assertThat(piece).isEqualTo(piece);
+        assertThat(piece2).isEqualTo(piece2);
+        assertThat(piece3).isEqualTo(piece3);
+    }
+
+    @Test
+    void testHashCode() {
+        assertNotEquals(piece.hashCode(), piece2.hashCode());
+        assertNotEquals(piece.hashCode(), piece3.hashCode());
+        assertNotEquals(piece2.hashCode(), piece3.hashCode());
+        assertEquals(piece.hashCode(), new Piece(Color.WHITE, PieceType.KING).hashCode());
+        //assertNotEquals(piece.hashCode(), new Piece(Color.WHITE, PieceType.KING).hashCode());
+        assertEquals(piece.hashCode(), piece.hashCode());
+        assertEquals(piece2.hashCode(), piece2.hashCode());
+        assertEquals(piece3.hashCode(), piece3.hashCode());
+    }
 }

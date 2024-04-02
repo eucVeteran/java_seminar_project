@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Alzbeta Strompova
@@ -137,6 +137,42 @@ public class ChessTest {
         game.move(new Position(3, 1), new Position(3, 0));
         assertEquals(piece4.getId(), game.getBoard().getPiece(new Position(3, 0)).getId());
         assertEquals(PieceType.BISHOP, game.getBoard().getPiece(new Position(3, 0)).getPieceType());
+    }
+
+    @Test
+    void testEquals() {
+        assertThat(new Chess(null, null)).isEqualTo(new Chess(null, null));
+        assertThat(game).isEqualTo(new Chess(player, player2));
+
+        var game2 = new Chess(player, player2);
+        assertThat(game2).isEqualTo(game);
+
+        var piece = new Piece(Color.WHITE, PieceType.ROOK);
+        game2.getBoard().putPieceOnBoard(new Position(7, 1), piece);
+        assertThat(game).isEqualTo(game2);
+    }
+
+    @Test
+    void testHashCode() {
+        assertThat(new Chess(null, null)).hasSameHashCodeAs(new Chess(null, null));
+
+        var game2 = new Chess(player, player2);
+        assertThat(game).hasSameHashCodeAs(game2);
+
+        var piece = new Piece(Color.WHITE, PieceType.ROOK);
+        game.getBoard().putPieceOnBoard(new Position(7, 1), piece);
+        assertThat(game).hasSameHashCodeAs(game2);
+    }
+
+    @Test
+    void builderAddPieceToBoard() {
+        var game = new Chess.Builder()
+                .addPlayer(player)
+                .addPlayer(player2)
+                .addPieceToBoard(new Position('a', 3), new Piece(Color.WHITE, PieceType.KING))
+                .addPieceToBoard(new Position('e', 7), new Piece(Color.BLACK, PieceType.QUEEN))
+                .build();
+        org.junit.jupiter.api.Assertions.assertEquals(2, game.getBoard().getAllPiecesFromBoard().length);
     }
 
 }

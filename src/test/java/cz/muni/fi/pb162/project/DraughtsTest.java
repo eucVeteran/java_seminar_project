@@ -4,6 +4,7 @@ import cz.muni.fi.pb162.project.helper.BasicRulesTester;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -110,6 +111,30 @@ public class DraughtsTest {
         game.move(new Position(0, 4), new Position(0, 5));
         assertEquals(piece2, game.getBoard().getPiece(new Position(0, 5)));
         assertEquals(PieceType.DRAUGHTS_MAN, game.getBoard().getPiece(new Position(0, 5)).getPieceType());
+    }
+
+    @Test
+    void testEquals() {
+        assertThat(new Draughts(null, null)).isEqualTo(new Draughts(null, null));
+
+        var game2 = new Draughts(player, player2);
+        assertThat(game2).isEqualTo(game);
+
+        var piece = new Piece(Color.WHITE, PieceType.DRAUGHTS_KING);
+        game2.getBoard().putPieceOnBoard(new Position(7, 1), piece);
+        assertThat(game).isEqualTo(game2);
+    }
+
+    @Test
+    void testHashCode() {
+        assertThat(new Draughts(null, null)).hasSameHashCodeAs(new Draughts(null, null));
+
+        var game2 = new Draughts(player, player2);
+        assertThat(game).hasSameHashCodeAs(game2);
+
+        var piece = new Piece(Color.WHITE, PieceType.DRAUGHTS_KING);
+        game.getBoard().putPieceOnBoard(new Position(7, 1), piece);
+        assertThat(game).hasSameHashCodeAs(game2);
     }
 
 }
