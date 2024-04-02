@@ -1,5 +1,7 @@
 package cz.muni.fi.pb162.project;
 
+import java.util.Arrays;
+
 /**
  * Class Board represents a board with sides length of specific size.
  *
@@ -50,15 +52,6 @@ public class Board {
     }
 
     /**
-     * Returns the size of the board.
-     *
-     * @return the size of the board
-     */
-    public int getSize() {
-        return board.length;
-    }
-
-    /**
      * Checks if a position is within the bounds of the board.
      *
      * @param position the position to check
@@ -84,16 +77,6 @@ public class Board {
     }
 
     /**
-     * Gets the piece at the specified position on the board.
-     *
-     * @param position the position to get the piece from
-     * @return the piece at the specified position, or <code>null</code> if there is no piece.
-     */
-    public Piece getPiece(Position position) {
-        return inRange(position) ? board[position.column()][position.line()] : null;
-    }
-
-    /**
      * Places a piece on the board at the specified position.
      *
      * @param position the position to place the piece
@@ -101,5 +84,100 @@ public class Board {
      */
     public void putPieceOnBoard(Position position, Piece piece) {
         board[position.column()][position.line()] = piece;
+    }
+
+    /**
+     * Returns the current layout of pieces on the board.
+     *
+     * @return the current layout of pieces on the board.
+     */
+    @Override
+    public String toString() {
+        var result = new StringBuilder();
+
+        letterColumns(result);
+        addRestLayout(result);
+
+        return result.toString();
+    }
+
+    /**
+     * Helper for {@link Board#toString()}.
+     * Adds top of the board, i.e. letters of columns.
+     *
+     * @param result not completed layout with completed first line.
+     */
+    private void letterColumns(StringBuilder result) {
+        result.append(' ');
+        for (int j = 0; j < getSize(); j++) {
+            char letter = (char) ('A' + j);
+            result.append("   ").append(letter);
+        }
+        result.append(' ').append(System.lineSeparator());
+        result.append("  ").append("----".repeat(getSize())).append(System.lineSeparator());
+    }
+
+    /**
+     * Helper for {@link Board#toString()}.
+     * Adds rest of the board, i.e. line numbers, board squares, pieces.
+     *
+     * @param result completed layout of a board.
+     */
+    private void addRestLayout(StringBuilder result) {
+        for (int i = 1; i < getSize() + 1; i++) {
+            int line = getSize() + 1 - i;
+            result.append(getSize() - i + 1).append(" |");
+            for (int j = 0; j < getSize(); j++) {
+                var currentPiece = getPiece(new Position(j, line - 1));
+                if (currentPiece != null) {
+                    result.append(' ').append(currentPiece);
+                } else {
+                    result.append("  ");
+                }
+                result.append(" |");
+            }
+            result.append(System.lineSeparator());
+            result.append("  ").append("----".repeat(getSize())).append(System.lineSeparator());
+        }
+        result.deleteCharAt(result.length() - 1);
+    }
+
+    /**
+     * Returns all the pieces on the board.
+     *
+     * @return all pieces on the board.
+     */
+    public Piece[] getAllPiecesFromBoard() {
+        var allPieces = new Piece[getSize() * getSize()];
+        int index = 0;
+        for (int i = 0; i < getSize(); i++) {
+            for (int j = 0; j < getSize(); j++) {
+                Piece currentPiece = board[i][j];
+                if (currentPiece != null) {
+                    allPieces[index] = currentPiece;
+                    index++;
+                }
+            }
+        }
+        return Arrays.copyOf(allPieces, index);
+    }
+
+    /**
+     * Returns the size of the board.
+     *
+     * @return the size of the board
+     */
+    public int getSize() {
+        return board.length;
+    }
+
+    /**
+     * Gets the piece at the specified position on the board.
+     *
+     * @param position the position to get the piece from
+     * @return the piece at the specified position, or <code>null</code> if there is no piece.
+     */
+    public Piece getPiece(Position position) {
+        return inRange(position) ? board[position.column()][position.line()] : null;
     }
 }

@@ -6,5 +6,5 @@ package cz.muni.fi.pb162.project;
  * @author Azizbek Toshpulatov
  */
 public enum PieceType {
-    KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN, DRAUGHTS_MAN
+    KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN, DRAUGHTS_MAN, DRAUGHTS_KING
 }
