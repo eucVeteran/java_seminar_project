@@ -34,7 +34,7 @@ This kind of decomposition is known as the [Strategy](https://refactoring.guru/d
      Be aware of violating encapsulation when returning a private collection.
      > Discuss when it's necessary to use `Collections.unmodifiable*`. 
      > Why is it not required (exceptionally!) in this special case?
-   - Add the `Set<Coordinates> getAllPossibleMoves(Game game)` method. 
+   - Add the `Set<Position> getAllPossibleMoves(Game game)` method. 
      While the `getMovementStrategies()` getter returns moving strategies, this method finds and returns valid 
      target positions on the game's board, taking into account the position of the piece. More precisely, the method:
      - finds the position of the pieces on the game's board;
