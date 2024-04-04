@@ -4,10 +4,10 @@ import static cz.muni.fi.pb162.project.Color.WHITE;
 import static cz.muni.fi.pb162.project.Color.BLACK;
 import static cz.muni.fi.pb162.project.PieceType.KING;
 import static cz.muni.fi.pb162.project.PieceType.QUEEN;
+import static cz.muni.fi.pb162.project.PieceType.PAWN;
 import static cz.muni.fi.pb162.project.PieceType.ROOK;
 import static cz.muni.fi.pb162.project.PieceType.KNIGHT;
 import static cz.muni.fi.pb162.project.PieceType.BISHOP;
-import static cz.muni.fi.pb162.project.PieceType.PAWN;
 import static cz.muni.fi.pb162.project.StateOfGame.BLACK_PLAYER_WIN;
 import static cz.muni.fi.pb162.project.StateOfGame.WHITE_PLAYER_WIN;
 
@@ -101,6 +101,20 @@ public class Chess extends Game {
         for (int i = 0; i < getBoard().getSize(); i++) {
             getBoard().putPieceOnBoard(new Position(i, 1), new Piece(WHITE, PAWN));
             getBoard().putPieceOnBoard(new Position(i, 6), new Piece(BLACK, PAWN));
+        }
+    }
+
+    /**
+     * Returns a builder for {@link Chess} class.
+     *
+     * @author Azizbek Toshpulatov
+     */
+    public static class Builder extends GameBuilder<Chess> {
+        @Override
+        public Chess build() {
+            Chess built = new Chess(getPlayerOneBuilder(), getPlayerTwoBuilder());
+            built.buildBoard(getBoardBuilder());
+            return built;
         }
     }
 }

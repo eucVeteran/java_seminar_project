@@ -1,5 +1,6 @@
 package cz.muni.fi.pb162.project;
 
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -7,7 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @author Azizbek Toshpulatov
  */
-public class Piece implements Prototype {
+public class Piece implements Prototype<Piece> {
     private static final AtomicLong ID_VALUES = new AtomicLong(0);
 
     private final Color color;
@@ -60,5 +61,26 @@ public class Piece implements Prototype {
 
     public PieceType getPieceType() {
         return pieceType;
+    }
+
+    /**
+     * Returns {@code true} if they are of the same {@link Color} and {@link PieceType}, regardless of the id.
+     * Otherwise, returns false.
+     *
+     * @param obj {@code object} to compare.
+     * @return {@code true} if they have same {@link Color} and {@link PieceType}.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this.getClass() != obj.getClass()) {
+            return false;
+        }
+        return (this.getColor() == ((Piece) obj).getColor() &&
+                this.getPieceType() == ((Piece) obj).getPieceType());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getColor(), getPieceType());
     }
 }

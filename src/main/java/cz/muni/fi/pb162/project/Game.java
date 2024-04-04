@@ -99,6 +99,20 @@ public abstract class Game implements Playable {
     protected abstract void updateStatus();
 
     /**
+     * Puts a pieces from the builder on the game board.
+     * If there is no piece on the board of the builder, removes anything that is on the current cell of the game board.
+     */
+    protected void buildBoard(Board toBuild) {
+        for (int i = 0; i < getBoard().getSize(); i++) {
+            for (int j = 0; j < getBoard().getSize(); j++) {
+                Position currentPos = new Position(i, j);
+                Piece pieceToPut = toBuild.getPiece(currentPos);
+                getBoard().putPieceOnBoard(currentPos, pieceToPut);
+            }
+        }
+    }
+
+    /**
      * Returns the player whose turn it is.
      *
      * @return the player whose turn it is.
@@ -128,5 +142,36 @@ public abstract class Game implements Playable {
 
     public Player getPlayerTwo() {
         return playerTwo;
+    }
+
+    /**
+     * Returns {@code true} if the first and second players are the same. Game state and board state do not matter.
+     *
+     * @param obj object to compare.
+     * @return {@code true} if the first and second players are the same. Game state and board state do not matter.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Game)) {
+            return false;
+        }
+
+        Player xx = getPlayerOne();
+        Player xy = getPlayerTwo();
+        Player yx = ((Game) obj).getPlayerOne();
+        Player yy = ((Game) obj).getPlayerTwo();
+        return xx == yx && xy == yy;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        if (getPlayerOne() != null) {
+            result = 31 * result + getPlayerOne().hashCode();
+        }
+        if (getPlayerTwo() != null) {
+            result = 31 * result + getPlayerTwo().hashCode();
+        }
+        return result;
     }
 }
