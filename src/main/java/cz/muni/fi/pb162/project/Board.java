@@ -1,6 +1,7 @@
 package cz.muni.fi.pb162.project;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Class Board represents a board with sides length of specific size.
@@ -179,5 +180,27 @@ public class Board {
      */
     public Piece getPiece(Position position) {
         return inRange(position) ? board[position.column()][position.line()] : null;
+    }
+
+    /**
+     * Returns {@code true} if they are the same size and the same pieces (type and color) are at the same positions.
+     *
+     * @param obj board to compare.
+     * @return true if they have the same size and the same pieces that are at the same position.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this.getClass() != obj.getClass()) {
+            return false;
+        }
+
+        return (this.getSize() == ((Board) obj).getSize() && Arrays.deepEquals(this.board, ((Board) obj).board));
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(getSize());
+        result = 31 * result + Arrays.deepHashCode(board);
+        return result;
     }
 }

@@ -84,4 +84,18 @@ public class Draughts extends Game {
             getBoard().putPieceOnBoard(new Position(i, 7), new Piece(BLACK, DRAUGHTS_MAN));
         }
     }
+
+    /**
+     * Returns a builder for {@link Draughts} class.
+     *
+     * @author Azizbek Toshpulatov
+     */
+    public static class Builder extends GameBuilder<Draughts> {
+        @Override
+        public Draughts build() {
+            Draughts built = new Draughts(getPlayerOneBuilder(), getPlayerTwoBuilder());
+            built.buildBoard(getBoardBuilder());
+            return built;
+        }
+    }
 }
