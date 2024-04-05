@@ -1,6 +1,7 @@
 package cz.muni.fi.pb162.project;
 
 import cz.muni.fi.pb162.project.helper.BasicRulesTester;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
@@ -21,7 +22,7 @@ public class PieceTest {
 
     @Test
     void attributesAndMethodsAmount() {
-        BasicRulesTester.attributesAmount(Piece.class, 3);
+        BasicRulesTester.attributesAmount(Piece.class, 4);
         //BasicRulesTester.methodsAmount(Piece.class, 7);
         BasicRulesTester.attributesFinal(Piece.class, 4);
     }
@@ -101,5 +102,43 @@ public class PieceTest {
         assertEquals(piece.hashCode(), piece.hashCode());
         assertEquals(piece2.hashCode(), piece2.hashCode());
         assertEquals(piece3.hashCode(), piece3.hashCode());
+    }
+
+    @Test
+    void getMoves() {
+        int expectedSize = piece.getMovementStrategies().size();
+        try {
+            piece.getMovementStrategies().clear();
+            Assertions.assertThat(piece.getMovementStrategies())
+                    .as("Method returns modifiable collection - return new or unmodifiable.")
+                    .hasSize(expectedSize);
+        } catch (UnsupportedOperationException e) {
+            // ok (unmodifiable)
+        }
+    }
+
+    @Test
+    void getAllPossibleMoves() {
+        var game = new Chess(null, null);
+        var whiteKing = game.getBoard().getPiece(new Position(4, 0));
+        Assertions.assertThat(whiteKing.getAllPossibleMoves(game)).isEmpty();
+        var blackPawn = game.getBoard().getPiece(new Position(3, 6));
+        Assertions.assertThat(blackPawn.getAllPossibleMoves(game))
+                .containsOnly(new Position(3, 5), new Position(3, 4));
+        var whiteQueen = new Piece(Color.WHITE, PieceType.QUEEN);
+        game.getBoard().putPieceOnBoard(new Position(7, 1), whiteQueen);
+        Assertions.assertThat(whiteQueen.getAllPossibleMoves(game))
+                .containsOnly(new Position(7, 2),
+                        new Position(7, 3),
+                        new Position(7, 4),
+                        new Position(7, 5),
+                        new Position(7, 6),
+                        new Position(6, 2),
+                        new Position(5, 3),
+                        new Position(4, 4),
+                        new Position(3, 5),
+                        new Position(2, 6));
+        game.move(new Position(3, 1), new Position(3, 3));
+        Assertions.assertThat(whiteKing.getAllPossibleMoves(game)).containsOnly(new Position(3, 1));
     }
 }

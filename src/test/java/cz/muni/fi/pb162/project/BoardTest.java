@@ -5,6 +5,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -164,4 +166,30 @@ public class BoardTest {
         assertThat(board).doesNotHaveSameHashCodeAs(board2);
     }
 
+    @Test
+    void testRemovePieces() {
+        Board board1 = new Chess(null, null).getBoard();
+        board1.putPieceOnBoard(new Position('a', 3), new Piece(Color.WHITE, PieceType.DRAUGHTS_MAN));
+
+        Collection<Position> removedPos = board1.removePieces(Set.of());
+        assertEquals(0, removedPos.size());
+        assertEquals(33, board1.getAllPiecesFromBoard().length);
+
+        removedPos = board1.removePieces(Set.of(
+                new Piece(Color.WHITE, PieceType.DRAUGHTS_MAN),
+                new Piece(Color.BLACK, PieceType.DRAUGHTS_MAN),
+                new Piece(Color.WHITE, PieceType.PAWN)
+        ));
+        assertEquals(9, removedPos.size());
+        assertEquals(24, board1.getAllPiecesFromBoard().length);
+        assertTrue(removedPos.contains(new Position('a', 3)));
+        assertTrue(removedPos.contains(new Position('a', 2)));
+        assertTrue(removedPos.contains(new Position('b', 2)));
+        assertTrue(removedPos.contains(new Position('c', 2)));
+        assertTrue(removedPos.contains(new Position('d', 2)));
+        assertTrue(removedPos.contains(new Position('e', 2)));
+        assertTrue(removedPos.contains(new Position('f', 2)));
+        assertTrue(removedPos.contains(new Position('g', 2)));
+        assertTrue(removedPos.contains(new Position('h', 2)));
+    }
 }

@@ -1,24 +1,23 @@
 package cz.muni.fi.pb162.project;
 
 /**
- * Represents a basic game interface.
+ * Interface serves as a template, so that every board game has certain methods
+ * without which it would not be playable.
  *
- * @author Azizbek Toshpulatov
+ * @author Alzbeta Strompova
  */
 public interface Playable {
+
     /**
-     * Moves the piece from the old position to the new position on the board.
-     * If there is no piece at the source position or the positions are wrong, then the method does nothing
+     * Method that does one move in the game. Get piece from {@code oldPosition} and put it to {@code newPosition}.
      *
-     * @param oldPosition old position.
-     * @param newPosition new position.
+     * @param oldPosition coordinates of piece we want to move.
+     * @param newPosition coordinates of place we want to put this piece.
      */
     void move(Position oldPosition, Position newPosition);
 
     /**
-     * Demonstrates the gameplay. It loops until the game is ended.
-     * Each loop it finds out which player is next, increases the round by one
-     * and makes a move. The state of the game is updated automatically ({@link Game#updateStatus()}).
+     * Method that represents playing the board game.
      */
     void play();
 }
