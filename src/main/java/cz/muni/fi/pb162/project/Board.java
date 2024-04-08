@@ -190,11 +190,12 @@ public class Board {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this.getClass() != obj.getClass()) {
+        if (obj == null || this.getClass() != obj.getClass()) {
             return false;
         }
 
-        return (this.getSize() == ((Board) obj).getSize() && Arrays.deepEquals(this.board, ((Board) obj).board));
+        Board otherBoard = (Board) obj;
+        return this.getSize() == otherBoard.getSize() && Arrays.deepEquals(this.board, otherBoard.board);
     }
 
     @Override

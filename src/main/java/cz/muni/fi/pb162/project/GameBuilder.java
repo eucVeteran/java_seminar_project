@@ -7,9 +7,9 @@ package cz.muni.fi.pb162.project;
  * @author Azizbek Toshpulatov
  */
 public abstract class GameBuilder<T extends Game> {
-    private Player playerOneBuilder;
-    private Player playerTwoBuilder;
-    private final Board boardBuilder = new Board();
+    private Player playerOne;
+    private Player playerTwo;
+    private final Board board = new Board();
 
     /**
      * Adds a {@link Player} to the game being built. If the first {@link Player} has already been added,
@@ -19,11 +19,11 @@ public abstract class GameBuilder<T extends Game> {
      * @return instance of the {@link GameBuilder}, allowing method chaining.
      */
     public GameBuilder<T> addPlayer(Player player) {
-        if (playerOneBuilder != null) {
-            playerTwoBuilder = player;
+        if (playerOne != null) {
+            playerTwo = player;
             return this;
         }
-        playerOneBuilder = player;
+        playerOne = player;
         return this;
     }
 
@@ -35,7 +35,7 @@ public abstract class GameBuilder<T extends Game> {
      * @return an instance of the GameBuilder, allowing method chaining.
      */
     public GameBuilder<T> addPieceToBoard(Position pos, Piece piece) {
-        boardBuilder.putPieceOnBoard(pos, piece);
+        board.putPieceOnBoard(pos, piece);
         return this;
     }
 
@@ -46,15 +46,15 @@ public abstract class GameBuilder<T extends Game> {
      */
     public abstract T build();
 
-    public Board getBoardBuilder() {
-        return boardBuilder;
+    public Board getBoard() {
+        return board;
     }
 
-    public Player getPlayerOneBuilder() {
-        return playerOneBuilder;
+    public Player getPlayerOne() {
+        return playerOne;
     }
 
-    public Player getPlayerTwoBuilder() {
-        return playerTwoBuilder;
+    public Player getPlayerTwo() {
+        return playerTwo;
     }
 }

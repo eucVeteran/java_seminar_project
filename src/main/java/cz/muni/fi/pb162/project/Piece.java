@@ -72,11 +72,13 @@ public class Piece implements Prototype<Piece> {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this.getClass() != obj.getClass()) {
+        if (obj == null || this.getClass() != obj.getClass()) {
             return false;
         }
-        return (this.getColor() == ((Piece) obj).getColor() &&
-                this.getPieceType() == ((Piece) obj).getPieceType());
+
+        Piece otherPiece = (Piece) obj;
+        return (this.getColor() == otherPiece.getColor() &&
+                this.getPieceType() == otherPiece.getPieceType());
     }
 
     @Override

@@ -14,7 +14,7 @@ import static cz.muni.fi.pb162.project.StateOfGame.WHITE_PLAYER_WIN;
  */
 public class Draughts extends Game {
     /**
-     * Constructs a game with 2 players and a board of size {@link Board#DEF_SIZE} x {@link Board#DEF_SIZE}.
+     * Constructs a draughts game with 2 players and a board of size {@link Board#DEF_SIZE} x {@link Board#DEF_SIZE}.
      *
      * @param playerOne first player.
      * @param playerTwo second player.
@@ -22,6 +22,17 @@ public class Draughts extends Game {
     public Draughts(Player playerOne, Player playerTwo) {
         super(playerOne, playerTwo);
         setInitialSet();
+    }
+
+    /**
+     * Constructs a draughts game with 2 players and a given board.
+     *
+     * @param playerOne first player.
+     * @param playerTwo second player.
+     * @param board given board.
+     */
+    private Draughts(Player playerOne, Player playerTwo, Board board) {
+        super(playerOne, playerTwo, board);
     }
 
     /**
@@ -93,9 +104,7 @@ public class Draughts extends Game {
     public static class Builder extends GameBuilder<Draughts> {
         @Override
         public Draughts build() {
-            Draughts built = new Draughts(getPlayerOneBuilder(), getPlayerTwoBuilder());
-            built.buildBoard(getBoardBuilder());
-            return built;
+            return new Draughts(getPlayerOne(), getPlayerTwo(), getBoard());
         }
     }
 }
