@@ -27,6 +27,7 @@ public class BoardTest {
         //BasicRulesTester.methodsAmount(Board.class, 8);
         BasicRulesTester.attributesFinal(Board.class, 2);
     }
+
     @Test
     void inheritance() {
         BasicRulesTester.testInheritance(Prototype.class, Piece.class);
