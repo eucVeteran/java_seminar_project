@@ -30,7 +30,20 @@ public abstract class Game implements Playable {
     public Game(Player playerOne, Player playerTwo) {
         this.playerOne = playerOne;
         this.playerTwo = playerTwo;
-        this.board = new Board();
+        board = new Board();
+    }
+
+    /**
+     * Constructs a game with 2 players and a given board.
+     *
+     * @param playerOne first player.
+     * @param playerTwo second player.
+     * @param board built board.
+     */
+    public Game(Player playerOne, Player playerTwo, Board board) {
+        this.playerOne = playerOne;
+        this.playerTwo = playerTwo;
+        this.board = board;
     }
 
     /**
@@ -99,20 +112,6 @@ public abstract class Game implements Playable {
     protected abstract void updateStatus();
 
     /**
-     * Puts a pieces from the builder on the game board.
-     * If there is no piece on the board of the builder, removes anything that is on the current cell of the game board.
-     */
-    protected void buildBoard(Board toBuild) {
-        for (int i = 0; i < getBoard().getSize(); i++) {
-            for (int j = 0; j < getBoard().getSize(); j++) {
-                Position currentPos = new Position(i, j);
-                Piece pieceToPut = toBuild.getPiece(currentPos);
-                getBoard().putPieceOnBoard(currentPos, pieceToPut);
-            }
-        }
-    }
-
-    /**
      * Returns the player whose turn it is.
      *
      * @return the player whose turn it is.
@@ -156,11 +155,7 @@ public abstract class Game implements Playable {
             return false;
         }
 
-        Player xx = getPlayerOne();
-        Player xy = getPlayerTwo();
-        Player yx = ((Game) obj).getPlayerOne();
-        Player yy = ((Game) obj).getPlayerTwo();
-        return xx == yx && xy == yy;
+        return getPlayerOne() == ((Game) obj).getPlayerOne() && getPlayerTwo() == ((Game) obj).getPlayerTwo();
     }
 
     @Override

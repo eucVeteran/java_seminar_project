@@ -1,6 +1,11 @@
 package cz.muni.fi.pb162.project;
 
+import cz.muni.fi.pb162.project.moves.*;
+
+import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -14,6 +19,7 @@ public class Piece implements Prototype<Piece> {
     private final Color color;
     private final PieceType pieceType;
     private final long id = ID_VALUES.incrementAndGet();
+    private final List<Move> movementStrategies;
 
     /**
      * Creates a new instance of Piece with given {@code color} and {@code pieceType}.
@@ -25,6 +31,16 @@ public class Piece implements Prototype<Piece> {
     public Piece(Color color, PieceType pieceType) {
         this.color = color;
         this.pieceType = pieceType;
+        switch (pieceType) {
+            case KING -> movementStrategies = List.of(new Straight(1), new Diagonal(1));
+            case QUEEN -> movementStrategies = List.of(new Straight(), new Diagonal());
+            case BISHOP -> movementStrategies = List.of(new Diagonal());
+            case ROOK -> movementStrategies = List.of(new Straight());
+            case KNIGHT -> movementStrategies = List.of(new Knight());
+            case PAWN -> movementStrategies = List.of(new Pawn());
+            case DRAUGHTS_KING -> movementStrategies = List.of(new Diagonal(1), new Jump());
+            default -> movementStrategies = List.of(new Diagonal(1, true), new Jump(true));
+        }
     }
 
     /**
@@ -63,6 +79,29 @@ public class Piece implements Prototype<Piece> {
         return pieceType;
     }
 
+    public List<Move> getMovementStrategies() {
+        return movementStrategies;
+    }
+
+    /**
+     * Finds and returns valid target positions on the game's board, taking into account the position of the piece.
+     *
+     * @param game game to work on.
+     * @return a set of valid positions.
+     */
+    public Set<Position> getAllPossibleMoves(Game game) {
+        Position currentPos = game.getBoard().findCoordinatesOfPieceById(getId());
+        Set<Position> result = new HashSet<>();
+
+        for (Move strategy : movementStrategies) {
+            Set<Position> allowedMoves = strategy.getAllowedMoves(game, currentPos);
+            result.addAll(allowedMoves);
+        }
+
+        return result;
+    }
+
+
     /**
      * Returns {@code true} if they are of the same {@link Color} and {@link PieceType}, regardless of the id.
      * Otherwise, returns false.
@@ -72,11 +111,13 @@ public class Piece implements Prototype<Piece> {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this.getClass() != obj.getClass()) {
+        if (obj == null || this.getClass() != obj.getClass()) {
             return false;
         }
-        return (this.getColor() == ((Piece) obj).getColor() &&
-                this.getPieceType() == ((Piece) obj).getPieceType());
+
+        Piece otherPiece = (Piece) obj;
+        return (this.getColor() == otherPiece.getColor() &&
+                this.getPieceType() == otherPiece.getPieceType());
     }
 
     @Override

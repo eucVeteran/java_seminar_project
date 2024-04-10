@@ -19,7 +19,7 @@ import static cz.muni.fi.pb162.project.StateOfGame.WHITE_PLAYER_WIN;
 public class Chess extends Game {
 
     /**
-     * Constructs a game with 2 players and a board of size {@link Board#DEF_SIZE} x {@link Board#DEF_SIZE}.
+     * Constructs a chess game with 2 players and a board of size {@link Board#DEF_SIZE} x {@link Board#DEF_SIZE}.
      *
      * @param playerOne first player.
      * @param playerTwo second player.
@@ -27,6 +27,17 @@ public class Chess extends Game {
     public Chess(Player playerOne, Player playerTwo) {
         super(playerOne, playerTwo);
         setInitialSet();
+    }
+
+    /**
+     * Constructs a chess game with 2 players and a given board.
+     *
+     * @param playerOne first player.
+     * @param playerTwo second player.
+     * @param board given board.
+     */
+    private Chess(Player playerOne, Player playerTwo, Board board) {
+        super(playerOne, playerTwo, board);
     }
 
     /**
@@ -112,9 +123,7 @@ public class Chess extends Game {
     public static class Builder extends GameBuilder<Chess> {
         @Override
         public Chess build() {
-            Chess built = new Chess(getPlayerOneBuilder(), getPlayerTwoBuilder());
-            built.buildBoard(getBoardBuilder());
-            return built;
+            return new Chess(getPlayerOne(), getPlayerTwo(), getBoard());
         }
     }
 }

@@ -1,7 +1,6 @@
 package cz.muni.fi.pb162.project;
 
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Class Board represents a board with sides length of specific size.
@@ -85,6 +84,33 @@ public class Board {
      */
     public void putPieceOnBoard(Position position, Piece piece) {
         board[position.column()][position.line()] = piece;
+    }
+
+    private void removeSimilarPieces(Piece pieceToRemove, List<Position> removedPositions) {
+        for (int i = 0; i < getSize(); i++) {
+            for (int j = 0; j < getSize(); j++) {
+                Position positionToCheck = new Position(i, j);
+                Piece currentPiece = getPiece(positionToCheck);
+                if (currentPiece != null && currentPiece.equals(pieceToRemove)) {
+                    putPieceOnBoard(positionToCheck, null);
+                    removedPositions.add(positionToCheck);
+                }
+            }
+        }
+    }
+
+    /**
+     * Removes the same pieces from the board.
+     *
+     * @param toRemove pieces to remove.
+     * @return a list of position of removed pieces.
+     */
+    public List<Position> removePieces(Set<Piece> toRemove) {
+        List<Position> removedPositions = new ArrayList<>();
+        for (Piece pieceToRemove : toRemove) {
+            removeSimilarPieces(pieceToRemove, removedPositions);
+        }
+        return removedPositions.isEmpty() ? Collections.emptyList() : removedPositions;
     }
 
     /**
@@ -190,11 +216,12 @@ public class Board {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this.getClass() != obj.getClass()) {
+        if (obj == null || this.getClass() != obj.getClass()) {
             return false;
         }
 
-        return (this.getSize() == ((Board) obj).getSize() && Arrays.deepEquals(this.board, ((Board) obj).board));
+        Board otherBoard = (Board) obj;
+        return this.getSize() == otherBoard.getSize() && Arrays.deepEquals(this.board, otherBoard.board);
     }
 
     @Override
