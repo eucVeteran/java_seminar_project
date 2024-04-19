@@ -1,66 +1,75 @@
 # PB162 seminar project
 
 ## Objectives
-* Basic collections
+* Maps
+* Sorted containers
+* Anonymous classes
 
 ## Tasks
 Unless otherwise instructed, create new classes/enums/records in the `cz.muni.fi.pb162.project` package.
 
-To play a game, we need to know the possible movements of different types of pieces. We could encapsulate this 
-knowledge into the `Piece` class directly and use inheritance to variate this behavior (i.e., define subclasses for 
-knight, queen, etc.). Our approach will be different. Movements, e.g., in a diagonal direction, straight direction, 
-or jumping over an opponent's pieces, can be considered _moving strategies_. Therefore, the idea lies in having only 
-a single generic `Piece` class whose behavior is adapted by dynamically setting the moving strategies. 
-This kind of decomposition is known as the [Strategy](https://refactoring.guru/design-patterns/strategy) design pattern.
+1. Make the `Board` cloneable, i.e., implementing the `Prototype` interface. The returned clone 
+   represents a deep copy. This means that any change on the original board will not affect the clone.
+   > Use `Arrays.copyOf(originalArray, length); to copy arrays`
+2. Add the `Tournament` class. This class aims to store the history (states of boards) of multiple games 
+   played simultaneously. Use a single map attribute to implement the following functions:
+   - The `void storeGameState(Game game)` method records the current state of the board of the given game.
+     Adds the game into the tournament if the game does not exist yet.
+     Make the method as efficient as possible(constant time).
+   - The `Collection<Board> getGameHistory(Game game)` method returns history of the game board. 
+     Returns an empty collection if the game does not exist in the tournament.
+     Make the method as efficient as possible (constant time).
+     > Be aware of encapsulation!
+   - The `Collection<Game> findGamesOfPlayer(String name)` method returns all games in which the player with the given 
+     name is involved. Returns an empty collection if there is no such game.
+     Use the for-each cycle without stream. The efficiency can be suboptimal (linear time).
+3. Define **natural ordering** for `Position` so that positions are sorted from left to right
+   and bottom to top (when looking at the board): a1 < a2 < a3 < ... < b1 < b2 < b3 ...  
+   > Natural ordering has to correspond to equality. But the `Position` record has 
+   > no `equals` and `hashCode` defined. Nevertheless, the record satisfies this condition. Why?
+4. Define inverse ordering to the natural ordering of board positions. Name the class `PositionInverseComparator`.
+   Reuse the code of natural ordering in the implementation.
 
-1. Study the `Move` interface method in the `moves` package. Focus primarily on the `getAllowedMoves`
-   method and implementing classes that define several movement strategies for pieces of chess and draughts.
-2. Adapt the `Piece` class
-   - A piece stores a list of movement strategies. The list is initiated by 
-     the constructor using the following code:
-     ```
-     switch (pieceType) {
-		case KING -> List.of(new Straight(1), new Diagonal(1));
-		case QUEEN -> List.of(new Straight(), new Diagonal());
-		case BISHOP -> List.of(new Diagonal());
-		case ROOK -> List.of(new Straight());
-		case KNIGHT -> List.of(new Knight());
-		case PAWN -> List.of(new Pawn());
-		case DRAUGHTS_KING -> List.of(new Diagonal(1), new Jump());
-		case DRAUGHTS_MAN -> List.of(new Diagonal(1, true), new Jump(true));
-	 };
-     ```
-   - Add the `getMovementStrategies()` method, which returns the list of movement strategies.
-     Be aware of violating encapsulation when returning a private collection.
-     > Discuss when it's necessary to use `Collections.unmodifiable*`. 
-     > Why is it not required (exceptionally!) in this special case?
-   - Add the `Set<Position> getAllPossibleMoves(Game game)` method. 
-     While the `getMovementStrategies()` getter returns moving strategies, this method finds and returns valid 
-     target positions on the game's board, taking into account the position of the piece. More precisely, the method:
-     - finds the position of the pieces on the game's board;
-     - takes movement strategies one by one;
-     - for each strategy, it finds all allowed moves of the piece oin the game 
-       (i.e., possible target positions for the strategy);
-     - puts found target positions into the output set.
-     > Don't use streams! Consider the consequences of setting the output set as modifiable/unmodifiable.
-     > Note that the `Piece` class remains immutable.
+In what follows, the goal is to practice various syntax constructions when using ordering.
+Therefore, don't look for any deeper meaning behind the functional requirements.
 
-3. Add the `removePieces(Set<Piece> toRemove)` method to the `Board` class. 
-   - Removes all pieces included in the input set from the board. 
-   - Returns positions of removed pieces. The order of positions in the output collection is not important.
-     Select the proper return type. 
-   - Be aware that there can be multiple pieces of the same type and color on the board, e.g., multiple white pawns. 
-     All of them have to be removed if a white pawn is in the input set.
-   - An empty collection is returned if no piece has been removed (for any reason).
-   > Don't use streams
+5. Add the following methods to the `Board` class. They aim to return a sorted collection of pieces on the board.
+   Exceptionally, don't reuse the methods (don't call each other). Copy-and-past the same code instead so that
+   you can see the differences explicitly.
+   - Add the helper (not public) method and use it for the implementation of the remaining methods:
+     ```java
+     protected void addOccupiedPositions(SortedSet<Position> positions) {
+        for (int i = 0; i < getSize(); i++) {
+            for (int j = 0; j < getSize(); j++) {
+                Position pos = new Position(i, j);
+                if (getPiece(pos) != null) {
+                    positions.add(pos);
+                }
+            }
+        }
+     }
+     ``` 
+   - Add the `SortedSet<Position> getOccupiedPositionsA()` method, which returns positions with a piece
+     sorted according to step 4 (i.e., the inverse ordering to the natural ordering). 
+     Use `PositionInverseComparator` for the implementation.
+   - Add the `SortedSet<Position> getOccupiedPositionsB()` method that does the same as the previous one
+     but defines the inverse ordering as **anonymous class** inside this method (without using lambda expressions).
+   - Add the `SortedSet<Position> getOccupiedPositionsC()` method that does the same as the previous one
+     but defines the inverse ordering as **lambda expression**.
+     > Discuss when it is possible to replace the anonymous class with a lambda expression and when not.
+   - Add the `SortedSet<Position> getOccupiedPositionsD()` method that does the same as the previous one,
+     but the inverse ordering is obtained from the natural ordering without any additional line of code.
+     > Study the `Collections` utility class
    
 ## Takeaways
-* Never return your private modifiable collections directly. Always create an unmodifiable wrapper via `Collections.unmodifiable*`.
-* The `List.of()` and similar methods create unmodifiable collections!
-* Always use the closest collection interface as a collection type.
-  - Correct: `Set<String> col = new HashSet<>();`.
-  - Incorrect: `HashSet<String> col = new HashSet<>();`
-  - Incorrect: `Collection<String> col = new HashSet<>();`
+* When working with maps, the definition of equality (`equals` and `hashCode`) is crucial
+  because `equals` is used in keys (what does it mean that two games are the same?)
+  and `hashCode` is used for saving values (poorly implemented `Gema.hashCode()` can degrade performance).
+* The natural ordering is only one. On the contrary, you can define multiple comparators.
+* Define a comparator as a regular class only if it is used in multiple places in the code.
+  Otherwise, use lambda expressions.
+* Do not define inverted ordering to an existing ordering. There is always some way to directly invert
+  an existing order.
 
 ## Features to be manually checked by tutors 
 *  

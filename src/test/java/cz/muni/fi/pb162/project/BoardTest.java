@@ -4,15 +4,11 @@ import cz.muni.fi.pb162.project.helper.BasicRulesTester;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Alzbeta Strompova
@@ -27,10 +23,9 @@ public class BoardTest {
         //BasicRulesTester.methodsAmount(Board.class, 8);
         BasicRulesTester.attributesFinal(Board.class, 2);
     }
-
     @Test
     void inheritance() {
-        BasicRulesTester.testInheritance(Prototype.class, Piece.class);
+        BasicRulesTester.testInheritance(Prototype.class, Board.class);
     }
 
     @Test
@@ -192,5 +187,42 @@ public class BoardTest {
         assertTrue(removedPos.contains(new Position('f', 2)));
         assertTrue(removedPos.contains(new Position('g', 2)));
         assertTrue(removedPos.contains(new Position('h', 2)));
+    }
+
+    @Test
+    void makeClone() {
+        Piece piece = new Piece(Color.WHITE, PieceType.PAWN);
+        Position pos1 = new Position('a', 3);
+        Position pos2 = new Position('a', 4);
+        board.putPieceOnBoard(pos1, piece);
+        Board clone = board.makeClone();
+        assertNotNull(clone);
+        board.putPieceOnBoard(pos1, null);
+        board.putPieceOnBoard(pos2, piece);
+        assertEquals(1, clone.getAllPiecesFromBoard().length);
+        assertEquals(piece, clone.getPiece(pos1));
+        assertNull(clone.getPiece(pos2));
+    }
+
+    @Test
+    void occupiedPositions() {
+        var positions = List.of(
+                new Position('c', 4),
+                new Position('b', 4),
+                new Position('c', 2),
+                new Position('b', 2));
+
+        var piece = new Piece(Color.WHITE, PieceType.KING);
+        positions.forEach(p -> board.putPieceOnBoard(p, piece));
+        testPositionsOrder(board.getOccupiedPositionsA(), positions);
+        testPositionsOrder(board.getOccupiedPositionsB(), positions);
+        testPositionsOrder(board.getOccupiedPositionsC(), positions);
+        testPositionsOrder(board.getOccupiedPositionsD(), positions);
+    }
+
+    void testPositionsOrder(SortedSet<Position> check, List<Position> expected) {
+        assertEquals(expected.size(), check.size());
+        AtomicInteger i = new AtomicInteger();
+        check.forEach(p -> assertEquals(expected.get(i.getAndIncrement()), p));
     }
 }

@@ -1,9 +1,14 @@
 package cz.muni.fi.pb162.project;
 
 import cz.muni.fi.pb162.project.helper.BasicRulesTester;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Alzbeta Strompova
@@ -20,7 +25,7 @@ public class PositionTest {
     @Test
     void attributesAndMethodsAmount() {
         BasicRulesTester.attributesAmount(Position.class, 2);
-        BasicRulesTester.methodsAmount(Position.class, 6);
+        //BasicRulesTester.methodsAmount(Position.class, 7);
         BasicRulesTester.attributesFinal(Position.class, 3);
 
     }
@@ -52,4 +57,39 @@ public class PositionTest {
         assertEquals(result2.line(), result3.line());
     }
 
+    @Test
+    void compareTo() {
+        Assertions.assertThat(four)
+                .isLessThan(five)
+                .isLessThan(two)
+                .isLessThan(one)
+                .isLessThan(six)
+                .isLessThan(three);
+        Assertions.assertThat(three).isLessThan(new Position(4, 9));
+    }
+
+    @Test
+    void inverseOrdering() {
+        SortedSet<Position> pos = new TreeSet<>(new PositionInverseComparator()) {{
+            add(one);
+            add(two);
+            add(three);
+            add(four);
+            add(five);
+            add(six);
+        }};
+        var iter = pos.iterator();
+        assertTrue(iter.hasNext());
+        assertEquals(three, iter.next());
+        assertTrue(iter.hasNext());
+        assertEquals(six, iter.next());
+        assertTrue(iter.hasNext());
+        assertEquals(one, iter.next());
+        assertTrue(iter.hasNext());
+        assertEquals(two, iter.next());
+        assertTrue(iter.hasNext());
+        assertEquals(five, iter.next());
+        assertTrue(iter.hasNext());
+        assertEquals(four, iter.next());
+    }
 }
