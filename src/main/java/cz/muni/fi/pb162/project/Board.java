@@ -7,7 +7,7 @@ import java.util.*;
  *
  * @author Azizbek Toshpulatov
  */
-public class Board {
+public class Board implements Prototype<Board> {
     /**
      * Default size of the board
      */
@@ -170,6 +170,74 @@ public class Board {
     }
 
     /**
+     * Adds to given {@link SortedSet} of {@link Position}s an occupied positions on the {@link Board}.
+     *
+     * @param positions positions set to be updated.
+     */
+    protected void addOccupiedPositions(SortedSet<Position> positions) {
+        for (int i = 0; i < getSize(); i++) {
+            for (int j = 0; j < getSize(); j++) {
+                Position pos = new Position(i, j);
+                if (getPiece(pos) != null) {
+                    positions.add(pos);
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns a {@link SortedSet} of occupied positions, that are reverse sorted.
+     *
+     * @return a {@link SortedSet} of occupied positions, that are reverse sorted.
+     */
+    public SortedSet<Position> getOccupiedPositionsA() {
+        PositionInverseComparator inverseComparator = new PositionInverseComparator();
+        SortedSet<Position> result = new TreeSet<>(inverseComparator);
+        addOccupiedPositions(result);
+        return result;
+    }
+
+    /**
+     * Returns a {@link SortedSet} of occupied positions, that are reverse sorted.
+     *
+     * @return a {@link SortedSet} of occupied positions, that are reverse sorted.
+     */
+    public SortedSet<Position> getOccupiedPositionsB() {
+        Comparator<Position> comparator = new Comparator<Position>() {
+            @Override
+            public int compare(Position o1, Position o2) {
+                return -1 * o1.compareTo(o2);
+            }
+        };
+        SortedSet<Position> result = new TreeSet<>(comparator);
+        addOccupiedPositions(result);
+        return result;
+    }
+
+    /**
+     * Returns a {@link SortedSet} of occupied positions, that are reverse sorted.
+     *
+     * @return a {@link SortedSet} of occupied positions, that are reverse sorted.
+     */
+    public SortedSet<Position> getOccupiedPositionsC() {
+        SortedSet<Position> result = new TreeSet<>((x, y) -> -1 * x.compareTo(y));
+        addOccupiedPositions(result);
+        return result;
+    }
+
+    /**
+     * Returns a {@link SortedSet} of occupied positions, that are reverse sorted.
+     *
+     * @return a {@link SortedSet} of occupied positions, that are reverse sorted.
+     */
+    public SortedSet<Position> getOccupiedPositionsD() {
+        var reversed = Collections.reverseOrder();
+        SortedSet<Position> result = new TreeSet<>(reversed);
+        addOccupiedPositions(result);
+        return result;
+    }
+
+    /**
      * Returns all the pieces on the board.
      *
      * @return all pieces on the board.
@@ -229,5 +297,19 @@ public class Board {
         int result = Objects.hash(getSize());
         result = 31 * result + Arrays.deepHashCode(board);
         return result;
+    }
+
+    @Override
+    public Board makeClone() {
+        Board cloneBoard = new Board(getSize());
+        for (int i = 0; i < getSize(); i++) {
+            for (int j = 0; j < getSize(); j++) {
+                Piece currentPiece = board[i][j];
+                if (currentPiece != null) {
+                    cloneBoard.putPieceOnBoard(new Position(i, j), currentPiece.makeClone());
+                }
+            }
+        }
+        return cloneBoard;
     }
 }
