@@ -1,5 +1,6 @@
 package cz.muni.fi.pb162.project;
 
+import cz.muni.fi.pb162.project.exceptions.MissingPlayerException;
 import cz.muni.fi.pb162.project.helper.BasicRulesTester;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -175,4 +176,14 @@ public class ChessTest {
         org.junit.jupiter.api.Assertions.assertEquals(2, game.getBoard().getAllPiecesFromBoard().length);
     }
 
+    @Test
+    void builderDifferentNumberOfPlayers() {
+        var builder = new Chess.Builder();
+        assertThrows(MissingPlayerException.class, builder::build);
+        builder.addPlayer(player);
+        assertThrows(MissingPlayerException.class, builder::build);
+        assertDoesNotThrow(() -> {
+            builder.addPlayer(player).addPlayer(player2).addPlayer(player).addPlayer(player2).build();
+        });
+    }
 }

@@ -8,8 +8,7 @@ import java.util.HashSet;
 
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Alzbeta Strompova
@@ -140,5 +139,12 @@ public class PieceTest {
                         new Position(2, 6));
         game.move(new Position(3, 1), new Position(3, 3));
         Assertions.assertThat(whiteKing.getAllPossibleMoves(game)).containsOnly(new Position(3, 1));
+    }
+
+    @Test
+    void invalidConstructors() {
+        assertThrows(NullPointerException.class, () -> new Piece(null, PieceType.KING));
+        assertThrows(NullPointerException.class, () -> new Piece(Color.WHITE, null));
+        assertThrows(NullPointerException.class, () -> new Piece(null));
     }
 }

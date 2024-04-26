@@ -10,6 +10,9 @@ import org.junit.jupiter.api.Test;
  */
 class DiagonalTest {
 
+    private final Player player1 = new Player("xxx", Color.WHITE);
+    private final Player player2 = new Player("yyy", Color.BLACK);
+
     @Test
     void attributesAndMethods() {
         BasicRulesTester.attributesAmount(Diagonal.class, 2);
@@ -37,7 +40,7 @@ class DiagonalTest {
 
     @Test
     void getAllowedMovesStepBoardSize() {
-        Game game = new Chess.Builder().build(); // empty board
+        Game game = new Chess.Builder().addPlayer(player1).addPlayer(player2).build(); // empty board
         game.getBoard().putPieceOnBoard(new Position(3, 3), new Piece(Color.WHITE, PieceType.QUEEN));
         var diagonal = new Diagonal();
         var diagonal2 = new Diagonal(game.getBoard().getSize(), true);

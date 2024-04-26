@@ -1,5 +1,8 @@
 package cz.muni.fi.pb162.project;
 
+import cz.muni.fi.pb162.project.exceptions.EmptySquareException;
+import cz.muni.fi.pb162.project.exceptions.NotAllowedMoveException;
+
 /**
  * Interface serves as a template, so that every board game has certain methods
  * without which it would not be playable.
@@ -18,6 +21,9 @@ public interface Playable {
 
     /**
      * Method that represents playing the board game.
+     *
+     * @throws EmptySquareException    if we want to move piece from empty square on board.
+     * @throws NotAllowedMoveException if we want to do illegal move.
      */
-    void play();
+    void play() throws EmptySquareException, NotAllowedMoveException;
 }

@@ -1,75 +1,52 @@
 # PB162 seminar project
 
 ## Objectives
-* Maps
-* Sorted containers
-* Anonymous classes
+* Streams
+* Exceptions
 
 ## Tasks
 Unless otherwise instructed, create new classes/enums/records in the `cz.muni.fi.pb162.project` package.
 
-1. Make the `Board` cloneable, i.e., implementing the `Prototype` interface. The returned clone 
-   represents a deep copy. This means that any change on the original board will not affect the clone.
-   > Use `Arrays.copyOf(originalArray, length); to copy arrays`
-2. Add the `Tournament` class. This class aims to store the history (states of boards) of multiple games 
-   played simultaneously. Use a single map attribute to implement the following functions:
-   - The `void storeGameState(Game game)` method records the current state of the board of the given game.
-     Adds the game into the tournament if the game does not exist yet.
-     Make the method as efficient as possible(constant time).
-   - The `Collection<Board> getGameHistory(Game game)` method returns history of the game board. 
-     Returns an empty collection if the game does not exist in the tournament.
-     Make the method as efficient as possible (constant time).
-     > Be aware of encapsulation!
-   - The `Collection<Game> findGamesOfPlayer(String name)` method returns all games in which the player with the given 
-     name is involved. Returns an empty collection if there is no such game.
-     Use the for-each cycle without stream. The efficiency can be suboptimal (linear time).
-3. Define **natural ordering** for `Position` so that positions are sorted from left to right
-   and bottom to top (when looking at the board): a1 < a2 < a3 < ... < b1 < b2 < b3 ...  
-   > Natural ordering has to correspond to equality. But the `Position` record has 
-   > no `equals` and `hashCode` defined. Nevertheless, the record satisfies this condition. Why?
-4. Define inverse ordering to the natural ordering of board positions. Name the class `PositionInverseComparator`.
-   Reuse the code of natural ordering in the implementation.
+1. In the following methods, comment out the code (leave it there) and re-implement it using streams.
+   Discuss the approach (desired data pipeline principles) in the classroom before implementing it.
+   - `Tournament.findGamesOfPlayer`
+   - `Board.getAllPiecesFromBoard`
+   - `Chess.updateStatus`
+   - `Piece.getAllPossibleMoves`
+   > Use `Arrays.stream(...) to create a stream from an array`
+2. When creating a `Piece` instance, the color and piece type are mandatory. Therefore, refactor the constructor
+   so that a piece without color or type cannot be created. Throw an appropriate unchecked exception.
+   > Consider using utility methods from the `Objects` class to simplify the code.
+3. Similarly, for the `Piece` copy constructor, the input parameter is mandatory. Therefore, the constructor
+   has to throw the null pointer exception if the input argument is missing.
+   > Is any change of the code necessary? Compare the situation with the previous constructor.
+4. Create the following exceptions in the `exceptions` package that are specific to our application. 
+   We intentionally mix checked and unchecked exceptions to practice how to handle them.
+   - `EmptySquareException` and `NotAllowedMoveException` are **checked** exceptions.
+   - `InvalidFormatOfInputException` and `MissingPlayerException` are **unchecked** exceptions.
+   - Create at least **two constructors** in each class that call the constructor from the superclass.
+5. Refactor the `Chess.Builder.build()` and ``Draughts.Builder.build()`` methods so that they throw 
+   the `MissingPlayerException` exception if either the first or second player is not set
+   (they have not been specified by calling the `addPlayer` method twice).
+6. Refactor the `Game.play` method so that it throws exceptions. Update the signature of the `Playable.play()` accordingly. 
+   Do not forget to write _meaningful messages_ to exceptions. Do not forget to update Javadocs. 
+   - `EmptySquareException` if the user wants to move a piece from the empty position or the position is not on the board.
+   - `NotAllowedMoveException` if the user wants to make an illegal move.
+   - `InvalidFormatOfInputException` if the user's input is in the wrong format. The format must be `<char><int> <char><int>`.
 
-In what follows, the goal is to practice various syntax constructions when using ordering.
-Therefore, don't look for any deeper meaning behind the functional requirements.
-
-5. Add the following methods to the `Board` class. They aim to return a sorted collection of pieces on the board.
-   Exceptionally, don't reuse the methods (don't call each other). Copy-and-past the same code instead so that
-   you can see the differences explicitly.
-   - Add the helper (not public) method and use it for the implementation of the remaining methods:
-     ```java
-     protected void addOccupiedPositions(SortedSet<Position> positions) {
-        for (int i = 0; i < getSize(); i++) {
-            for (int j = 0; j < getSize(); j++) {
-                Position pos = new Position(i, j);
-                if (getPiece(pos) != null) {
-                    positions.add(pos);
-                }
-            }
-        }
-     }
-     ``` 
-   - Add the `SortedSet<Position> getOccupiedPositionsA()` method, which returns positions with a piece
-     sorted according to step 4 (i.e., the inverse ordering to the natural ordering). 
-     Use `PositionInverseComparator` for the implementation.
-   - Add the `SortedSet<Position> getOccupiedPositionsB()` method that does the same as the previous one
-     but defines the inverse ordering as **anonymous class** inside this method (without using lambda expressions).
-   - Add the `SortedSet<Position> getOccupiedPositionsC()` method that does the same as the previous one
-     but defines the inverse ordering as **lambda expression**.
-     > Discuss when it is possible to replace the anonymous class with a lambda expression and when not.
-   - Add the `SortedSet<Position> getOccupiedPositionsD()` method that does the same as the previous one,
-     but the inverse ordering is obtained from the natural ordering without any additional line of code.
-     > Study the `Collections` utility class
+> Note that you should program defensively from the very beginning. There are many other methods in our code in 
+> which we should check input parameters and respond to their possible errors. Do it for your code voluntarily.
+> Don't forget to update Javadoc adequately.
    
 ## Takeaways
-* When working with maps, the definition of equality (`equals` and `hashCode`) is crucial
-  because `equals` is used in keys (what does it mean that two games are the same?)
-  and `hashCode` is used for saving values (poorly implemented `Gema.hashCode()` can degrade performance).
-* The natural ordering is only one. On the contrary, you can define multiple comparators.
-* Define a comparator as a regular class only if it is used in multiple places in the code.
-  Otherwise, use lambda expressions.
-* Do not define inverted ordering to an existing ordering. There is always some way to directly invert
-  an existing order.
+* Streams require you to change your mindset from iterative data inspection to data pipelines.
+* Program defensively. Use special return values to indicate errors in input parameters. 
+  Use exceptions if special values are not possible (i.e., for constructors).
+* Use exceptions carefully. Throwing an exception triggers the crash of the application
+  (and then makes users angry) unless some code "above" stops it.
 
 ## Features to be manually checked by tutors 
-*  
+* Using streams in the task 1.
+* The copy constructor of the `Piece` should throw an exception implicitly (no special code throwing the exception 
+  should be present).
+* Throwing exceptions in the `play` and `getInputFromPlayer` methods (task 6).

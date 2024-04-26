@@ -10,6 +10,9 @@ import org.junit.jupiter.api.Test;
  */
 class StraightTest {
 
+    private final Player player1 = new Player("xxx", Color.WHITE);
+    private final Player player2 = new Player("yyy", Color.BLACK);
+
     @Test
     void inheritance() {
         BasicRulesTester.testInheritance(Move.class, Straight.class);
@@ -37,7 +40,7 @@ class StraightTest {
 
     @Test
     void getAllowedMovesStepBoardSize() {
-        Game game = new Chess.Builder().build(); // empty board
+        Game game = new Chess.Builder().addPlayer(player1).addPlayer(player2).build(); // empty board
         game.getBoard().putPieceOnBoard(new Position(3, 3), new Piece(Color.WHITE, PieceType.QUEEN));
         var straight = new Straight();
         Assertions.assertThat(straight.getAllowedMoves(game, new Position(3, 3)))
