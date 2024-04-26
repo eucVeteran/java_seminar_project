@@ -8,7 +8,7 @@ package cz.muni.fi.pb162.project;
  * @param line   the line of the position starting from 0.
  * @author Azizbek Toshpulatov
  */
-public record Position(int column, int line) {
+public record Position(int column, int line) implements Comparable<Position> {
     private static final int UNICODE_A_VAL = 97;
 
     /**
@@ -39,5 +39,16 @@ public record Position(int column, int line) {
     @Override
     public String toString() {
         return String.valueOf((char) (this.column() + UNICODE_A_VAL)) + (this.line() + 1);
+    }
+
+    @Override
+    public int compareTo(Position o) {
+        if (line < o.line) {
+            return -1;
+        } else if (line == o.line) {
+            return Integer.compare(column, o.column);
+        } else {
+            return 1;
+        }
     }
 }
