@@ -1,5 +1,9 @@
 package cz.muni.fi.pb162.project;
 
+import cz.muni.fi.pb162.project.exceptions.EmptySquareException;
+import cz.muni.fi.pb162.project.exceptions.MissingPlayerException;
+import cz.muni.fi.pb162.project.exceptions.NotAllowedMoveException;
+
 import java.util.Scanner;
 
 import static cz.muni.fi.pb162.project.Color.BLACK;
@@ -55,10 +59,9 @@ public abstract class Game implements Playable {
      */
     @Override
     public void move(Position oldPosition, Position newPosition) {
-        if (board.getPiece(oldPosition) == null) {
-            return;
-        }
-
+//        if (board.getPiece(oldPosition) == null) {
+//            return;
+//        }
         Piece piece = board.getPiece(oldPosition);
         board.putPieceOnBoard(oldPosition, null);
         board.putPieceOnBoard(newPosition, piece);
@@ -89,7 +92,7 @@ public abstract class Game implements Playable {
     }
 
     @Override
-    public void play() {
+    public void play() throws EmptySquareException, NotAllowedMoveException {
         while (stateOfGame == PLAYING) {
             System.out.println("State of game: " + stateOfGame);
 
@@ -98,6 +101,20 @@ public abstract class Game implements Playable {
 
             Position from = getInputFromPlayer();
             Position to = getInputFromPlayer();
+
+            if (!getBoard().inRange(from) || getBoard().isEmpty(from)) {
+                throw new EmptySquareException("You must move a certain piece that is on the board");
+            }
+
+            if (getBoard().getPiece(to).getColor() == currentPlayer.color()) {
+                throw new NotAllowedMoveException("You cannot move your piece on top of your piece");
+            }
+
+            Piece currentPiece = getBoard().getPiece(from);
+            if (currentPiece.getAllPossibleMoves(this).stream().noneMatch(position -> position == to) ||
+                    !getBoard().inRange(to)) {
+                throw new NotAllowedMoveException("Your piece cannot do that move");
+            }
 
             round++;
             move(from, to);

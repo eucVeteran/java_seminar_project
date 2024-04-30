@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Represents a {@link Game} {@link Tournament}, which stores the {@link Game} {@link Board} history
@@ -43,12 +44,19 @@ public class Tournament {
      * @return a list of games in which the {@link Player} is participating.
      */
     public Collection<Game> findGamesOfPlayer(String name) {
-        Collection<Game> gamesWithThisPlayer = new ArrayList<>();
-        for (Game game : tournament.keySet()) {
-            if (name.equals(game.getPlayerOne().name()) || name.equals(game.getPlayerTwo().name())) {
-                gamesWithThisPlayer.add(game);
-            }
-        }
-        return gamesWithThisPlayer;
+//        Collection<Game> gamesWithThisPlayer = new ArrayList<>();
+//        for (Game game : tournament.keySet()) {
+//            if (name.equals(game.getPlayerOne().name()) || name.equals(game.getPlayerTwo().name())) {
+//                gamesWithThisPlayer.add(game);
+//            }
+//        }
+//        return gamesWithThisPlayer;
+
+        return tournament.keySet()
+                .stream()
+                .filter(game ->
+                        name.equals(game.getPlayerOne().name())
+                                || name.equals(game.getPlayerTwo().name()))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 }

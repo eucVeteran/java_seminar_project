@@ -1,5 +1,7 @@
 package cz.muni.fi.pb162.project;
 
+import cz.muni.fi.pb162.project.exceptions.MissingPlayerException;
+
 import static cz.muni.fi.pb162.project.Color.BLACK;
 import static cz.muni.fi.pb162.project.Color.WHITE;
 import static cz.muni.fi.pb162.project.PieceType.DRAUGHTS_KING;
@@ -104,6 +106,9 @@ public class Draughts extends Game {
     public static class Builder extends GameBuilder<Draughts> {
         @Override
         public Draughts build() {
+            if (getPlayerOne() == null || getPlayerTwo() == null) {
+                throw new MissingPlayerException("A game must have 2 players");
+            }
             return new Draughts(getPlayerOne(), getPlayerTwo(), getBoard());
         }
     }

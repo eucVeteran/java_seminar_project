@@ -28,7 +28,10 @@ public class Piece implements Prototype<Piece> {
      * @param color     color of a piece.
      * @param pieceType piece type.
      */
-    public Piece(Color color, PieceType pieceType) {
+    public Piece(Color color, PieceType pieceType) throws NullPointerException{
+        if (color == null || pieceType == null) {
+            throw new NullPointerException("A piece must have a certain color and type");
+        }
         this.color = color;
         this.pieceType = pieceType;
         switch (pieceType) {
@@ -90,14 +93,19 @@ public class Piece implements Prototype<Piece> {
      * @return a set of valid positions.
      */
     public Set<Position> getAllPossibleMoves(Game game) {
+//        Position currentPos = game.getBoard().findCoordinatesOfPieceById(getId());
+//        Set<Position> result = new HashSet<>();
+
+//        for (Move strategy : movementStrategies) {
+//            Set<Position> allowedMoves = strategy.getAllowedMoves(game, currentPos);
+//            result.addAll(allowedMoves);
+//        }
+
+//        return result;
+
         Position currentPos = game.getBoard().findCoordinatesOfPieceById(getId());
         Set<Position> result = new HashSet<>();
-
-        for (Move strategy : movementStrategies) {
-            Set<Position> allowedMoves = strategy.getAllowedMoves(game, currentPos);
-            result.addAll(allowedMoves);
-        }
-
+        movementStrategies.stream().forEach(strategy -> result.addAll(strategy.getAllowedMoves(game, currentPos)));
         return result;
     }
 
