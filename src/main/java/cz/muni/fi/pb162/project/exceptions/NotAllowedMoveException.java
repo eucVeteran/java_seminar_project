@@ -1,7 +1,14 @@
 package cz.muni.fi.pb162.project.exceptions;
 
+import cz.muni.fi.pb162.project.Game;
+
 import java.security.PrivilegedActionException;
 
+/**
+ * Exception for {@link Game#play()} method.
+ *
+ * @author Azizbek Toshpulatov
+ */
 public class NotAllowedMoveException extends Exception {
     /**
      * Constructs a new exception with {@code null} as its detail message.
@@ -73,7 +80,8 @@ public class NotAllowedMoveException extends Exception {
      *                           be writable
      * @since 1.7
      */
-    public NotAllowedMoveException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public NotAllowedMoveException(String message, Throwable cause, boolean enableSuppression,
+                                   boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

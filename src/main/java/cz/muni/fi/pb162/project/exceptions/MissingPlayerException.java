@@ -1,5 +1,10 @@
 package cz.muni.fi.pb162.project.exceptions;
 
+/**
+ * Runtime Exception for {@link cz.muni.fi.pb162.project.Game}.
+ *
+ * @author Azizbek Toshpulatov
+ */
 public class MissingPlayerException extends RuntimeException {
     /**
      * Constructs a new runtime exception with {@code null} as its
@@ -70,7 +75,8 @@ public class MissingPlayerException extends RuntimeException {
      *                           be writable
      * @since 1.7
      */
-    public MissingPlayerException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public MissingPlayerException(String message, Throwable cause, boolean enableSuppression,
+                                  boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

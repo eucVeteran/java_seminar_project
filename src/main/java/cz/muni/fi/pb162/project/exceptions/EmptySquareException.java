@@ -2,6 +2,11 @@ package cz.muni.fi.pb162.project.exceptions;
 
 import java.security.PrivilegedActionException;
 
+/**
+ * Exception for {@link cz.muni.fi.pb162.project.Board}.
+ *
+ * @author Azizbek Toshpulatov
+ */
 public class EmptySquareException extends Exception {
 
     /**
@@ -74,7 +79,8 @@ public class EmptySquareException extends Exception {
      *                           be writable
      * @since 1.7
      */
-    public EmptySquareException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public EmptySquareException(String message, Throwable cause, boolean enableSuppression,
+                                boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }
