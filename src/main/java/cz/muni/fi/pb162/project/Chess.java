@@ -1,5 +1,11 @@
 package cz.muni.fi.pb162.project;
 
+import cz.muni.fi.pb162.project.exceptions.MissingPlayerException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import static cz.muni.fi.pb162.project.Color.WHITE;
 import static cz.muni.fi.pb162.project.Color.BLACK;
 import static cz.muni.fi.pb162.project.PieceType.KING;
@@ -34,7 +40,7 @@ public class Chess extends Game {
      *
      * @param playerOne first player.
      * @param playerTwo second player.
-     * @param board given board.
+     * @param board     given board.
      */
     private Chess(Player playerOne, Player playerTwo, Board board) {
         super(playerOne, playerTwo, board);
@@ -66,24 +72,32 @@ public class Chess extends Game {
      */
     @Override
     public void updateStatus() {
-        boolean whiteKing = false;
-        boolean blackKing = false;
-        Piece[] allPieces = getBoard().getAllPiecesFromBoard();
+//        boolean whiteKing = false;
+//        boolean blackKing = false;
+//        Piece[] allPieces = getBoard().getAllPiecesFromBoard();
+//
+//        for (Piece currentPiece : allPieces) {
+//            if (currentPiece.getPieceType() == KING) {
+//                if (currentPiece.getColor() == WHITE) {
+//                    whiteKing = true;
+//                } else {
+//                    blackKing = true;
+//                }
+//            }
+//        }
+//
+//        if (!whiteKing) {
+//            setStateOfGame(BLACK_PLAYER_WIN);
+//        } else if (!blackKing) {
+//            setStateOfGame(WHITE_PLAYER_WIN);
+//        }
 
-        for (Piece currentPiece : allPieces) {
-            if (currentPiece.getPieceType() == KING) {
-                if (currentPiece.getColor() == WHITE) {
-                    whiteKing = true;
-                } else {
-                    blackKing = true;
-                }
-            }
-        }
+        ArrayList<Piece> kings = Arrays.stream(getBoard().getAllPiecesFromBoard())
+                .filter(piece -> piece.getPieceType() == KING)
+                .collect(Collectors.toCollection(ArrayList::new));
 
-        if (!whiteKing) {
-            setStateOfGame(BLACK_PLAYER_WIN);
-        } else if (!blackKing) {
-            setStateOfGame(WHITE_PLAYER_WIN);
+        if (kings.size() == 1) {
+            setStateOfGame(kings.get(0).getColor() == WHITE ? WHITE_PLAYER_WIN : BLACK_PLAYER_WIN);
         }
     }
 
@@ -123,6 +137,9 @@ public class Chess extends Game {
     public static class Builder extends GameBuilder<Chess> {
         @Override
         public Chess build() {
+            if (getPlayerOne() == null || getPlayerTwo() == null) {
+                throw new MissingPlayerException("A game must have 2 players");
+            }
             return new Chess(getPlayerOne(), getPlayerTwo(), getBoard());
         }
     }

@@ -243,18 +243,23 @@ public class Board implements Prototype<Board> {
      * @return all pieces on the board.
      */
     public Piece[] getAllPiecesFromBoard() {
-        var allPieces = new Piece[getSize() * getSize()];
-        int index = 0;
-        for (int i = 0; i < getSize(); i++) {
-            for (int j = 0; j < getSize(); j++) {
-                Piece currentPiece = board[i][j];
-                if (currentPiece != null) {
-                    allPieces[index] = currentPiece;
-                    index++;
-                }
-            }
-        }
-        return Arrays.copyOf(allPieces, index);
+//        var allPieces = new Piece[getSize() * getSize()];
+//        int index = 0;
+//        for (int i = 0; i < getSize(); i++) {
+//            for (int j = 0; j < getSize(); j++) {
+//                Piece currentPiece = board[i][j];
+//                if (currentPiece != null) {
+//                    allPieces[index] = currentPiece;
+//                    index++;
+//                }
+//            }
+//        }
+//        return Arrays.copyOf(allPieces, index);
+
+        return Arrays.stream(board)
+                .flatMap(Arrays::stream)
+                .filter(Objects::nonNull)
+                .toArray(Piece[]::new);
     }
 
     /**
