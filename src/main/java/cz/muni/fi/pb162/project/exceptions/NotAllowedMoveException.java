@@ -1,11 +1,12 @@
 package cz.muni.fi.pb162.project.exceptions;
 
 import cz.muni.fi.pb162.project.Game;
+import cz.muni.fi.pb162.project.Piece;
 
 import java.security.PrivilegedActionException;
 
 /**
- * Exception for {@link Game#play()} method.
+ * Exception used when not allowed move is used for {@link Piece} in {@link Game#play()} method.
  *
  * @author Azizbek Toshpulatov
  */

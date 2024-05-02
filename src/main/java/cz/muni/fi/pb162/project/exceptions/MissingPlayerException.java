@@ -1,7 +1,9 @@
 package cz.muni.fi.pb162.project.exceptions;
 
+import cz.muni.fi.pb162.project.Game;
+
 /**
- * Runtime Exception for {@link cz.muni.fi.pb162.project.Game}.
+ * Runtime Exception used when there is only one player in {@link Game}.
  *
  * @author Azizbek Toshpulatov
  */

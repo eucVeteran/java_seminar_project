@@ -1,7 +1,9 @@
 package cz.muni.fi.pb162.project.exceptions;
 
+import cz.muni.fi.pb162.project.Piece;
+
 /**
- * Runtime Exception for {@link cz.muni.fi.pb162.project.Game}.
+ * Runtime Exception used when user gives invalid position for the {@link Piece} movement.
  *
  * @author Azizbek Toshpulatov
  */

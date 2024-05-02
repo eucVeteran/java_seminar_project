@@ -1,9 +1,10 @@
 package cz.muni.fi.pb162.project.exceptions;
 
 import java.security.PrivilegedActionException;
+import cz.muni.fi.pb162.project.Board;
 
 /**
- * Exception for {@link cz.muni.fi.pb162.project.Board}.
+ * Exception used when user tries to make moves from empty squares or squares outside the {@link Board}.
  *
  * @author Azizbek Toshpulatov
  */

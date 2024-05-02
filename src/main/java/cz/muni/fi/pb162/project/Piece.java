@@ -2,11 +2,11 @@ package cz.muni.fi.pb162.project;
 
 import cz.muni.fi.pb162.project.moves.*;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 /**
  * Class Piece represents a generic piece of a game, that has its color, type and id.
@@ -28,12 +28,9 @@ public class Piece implements Prototype<Piece> {
      * @param color     color of a piece.
      * @param pieceType piece type.
      */
-    public Piece(Color color, PieceType pieceType) throws NullPointerException{
-        if (color == null || pieceType == null) {
-            throw new NullPointerException("A piece must have a certain color and type");
-        }
-        this.color = color;
-        this.pieceType = pieceType;
+    public Piece(Color color, PieceType pieceType) throws NullPointerException {
+        this.color = Objects.requireNonNull(color);
+        this.pieceType = Objects.requireNonNull(pieceType);
         switch (pieceType) {
             case KING -> movementStrategies = List.of(new Straight(1), new Diagonal(1));
             case QUEEN -> movementStrategies = List.of(new Straight(), new Diagonal());
@@ -93,20 +90,21 @@ public class Piece implements Prototype<Piece> {
      * @return a set of valid positions.
      */
     public Set<Position> getAllPossibleMoves(Game game) {
-//        Position currentPos = game.getBoard().findCoordinatesOfPieceById(getId());
-//        Set<Position> result = new HashSet<>();
+        Position currentPos = game.getBoard().findCoordinatesOfPieceById(getId());
 
+//        Set<Position> result = new HashSet<>();
+//
 //        for (Move strategy : movementStrategies) {
 //            Set<Position> allowedMoves = strategy.getAllowedMoves(game, currentPos);
 //            result.addAll(allowedMoves);
 //        }
-
+//
 //        return result;
 
-        Position currentPos = game.getBoard().findCoordinatesOfPieceById(getId());
-        Set<Position> result = new HashSet<>();
-        movementStrategies.stream().forEach(strategy -> result.addAll(strategy.getAllowedMoves(game, currentPos)));
-        return result;
+        return movementStrategies
+                .stream()
+                .flatMap(strategy -> strategy.getAllowedMoves(game, currentPos).stream())
+                .collect(Collectors.toSet());
     }
 
 

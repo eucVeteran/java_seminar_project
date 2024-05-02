@@ -1,9 +1,6 @@
 package cz.muni.fi.pb162.project;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -22,7 +19,7 @@ public class Tournament {
      * @return a history of a {@link Game} {@link Board}.
      */
     public Collection<Board> getGameHistory(Game game) {
-        return tournament.get(game) == null ? new ArrayList<>() : tournament.get(game);
+        return tournament.getOrDefault(game, Collections.emptyList());
     }
 
     /**
@@ -57,6 +54,6 @@ public class Tournament {
                 .filter(game ->
                         name.equals(game.getPlayerOne().name())
                                 || name.equals(game.getPlayerTwo().name()))
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toList());
     }
 }
