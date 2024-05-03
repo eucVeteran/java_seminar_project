@@ -1,52 +1,70 @@
 # PB162 seminar project
 
 ## Objectives
-* Streams
-* Exceptions
+* Input-output, I/O exceptions
 
 ## Tasks
 Unless otherwise instructed, create new classes/enums/records in the `cz.muni.fi.pb162.project` package.
 
-1. In the following methods, comment out the code (leave it there) and re-implement it using streams.
-   Discuss the approach (desired data pipeline principles) in the classroom before implementing it.
-   - `Tournament.findGamesOfPlayer`
-   - `Board.getAllPiecesFromBoard`
-   - `Chess.updateStatus`
-   - `Piece.getAllPossibleMoves`
-   > Use `Arrays.stream(...) to create a stream from an array`
-2. When creating a `Piece` instance, the color and piece type are mandatory. Therefore, refactor the constructor
-   so that a piece without color or type cannot be created. Throw an appropriate unchecked exception.
-   > Consider using utility methods from the `Objects` class to simplify the code.
-3. Similarly, for the `Piece` copy constructor, the input parameter is mandatory. Therefore, the constructor
-   has to throw the null pointer exception if the input argument is missing.
-   > Is any change of the code necessary? Compare the situation with the previous constructor.
-4. Create the following exceptions in the `exceptions` package that are specific to our application. 
-   We intentionally mix checked and unchecked exceptions to practice how to handle them.
-   - `EmptySquareException` and `NotAllowedMoveException` are **checked** exceptions.
-   - `InvalidFormatOfInputException` and `MissingPlayerException` are **unchecked** exceptions.
-   - Create at least **two constructors** in each class that call the constructor from the superclass.
-5. Refactor the `Chess.Builder.build()` and ``Draughts.Builder.build()`` methods so that they throw 
-   the `MissingPlayerException` exception if either the first or second player is not set
-   (they have not been specified by calling the `addPlayer` method twice).
-6. Refactor the `Game.play` method so that it throws exceptions. Update the signature of the `Playable.play()` accordingly. 
-   Do not forget to write _meaningful messages_ to exceptions. Do not forget to update Javadocs. 
-   - `EmptySquareException` if the user wants to move a piece from the empty position or the position is not on the board.
-   - `NotAllowedMoveException` if the user wants to make an illegal move.
-   - `InvalidFormatOfInputException` if the user's input is in the wrong format. The format must be `<char><int> <char><int>`.
+1. Modify the `Chess.Builder` class to implement the `GameReadable` interface.
+   - The `read(InputStream is)` reads data about the board layout from the given _open binary input_,
+     instantiates pieces, and puts them on the board. The data format is as follows:
+      - Each row of the board is on a separate line.
+      - Pieces are separated from one another by `;` and `_` represents an empty board position (a `null` piece).
+      - For the initial board layout, the data looks like this:
+      ```
+          ROOK,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;ROOK,BLACK
+          KNIGHT,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;KNIGHT,BLACK
+          BISHOP,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;BISHOP,BLACK
+          QUEEN,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;QUEEN,BLACK
+          KING,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;KING,BLACK
+          BISHOP,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;BISHOP,BLACK
+          KNIGHT,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;KNIGHT,BLACK
+          ROOK,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;ROOK,BLACK
+      ```
+   - If the `hasHeader` parameter of the overloaded `read(InputStream is, boolean hasHeader)` method is `false`,
+     then it works exactly the same as the previous method. If the parameter is `true`, then a header line with players is
+     expected tobe processed first. The format of the header line can be easily seen in the next example, where _Mat_ and _Pat_
+     are names of the players:
+      ```
+          Mat-WHITE;Pat-BLACK
+          ROOK,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;ROOK,BLACK
+          KNIGHT,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;KNIGHT,BLACK
+          BISHOP,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;BISHOP,BLACK
+          QUEEN,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;QUEEN,BLACK
+          KING,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;KING,BLACK
+          BISHOP,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;BISHOP,BLACK
+          KNIGHT,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;KNIGHT,BLACK
+          ROOK,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;ROOK,BLACK
+      ```
+   - The other required variants of the `read` method with a `File` input parameter instead of `InputStream` work 
+     as expected - they read the same data from a file.
+   - All the `read` methods fail with an `IOException` on any I/O error **or data format error**.
+   - **Avoid code duplication** by reusing methods.
+   - Use _UTF-8_ encoding when reading text data.
+2. Modify the `Chess` class to implement the `GameWritable` interface.
+   - The output format is the same as that of the previous method. The header line with players is always printed.
+   > Use the correct line break separator instead of `\n`.
+3. Study the `writeJson` default method from the `GameWritable` interface. It is here to demonstrate the possibility of
+   writing the chess data in a structured JSON format. Update the `Main` class so that it uses the method:
+   ```java
+   var game = new Chess.Builder()
+                .addPlayer(new Player("Mat", Color.WHITE))
+                .addPlayer(new Player("Pat", Color.BLACK))
+                .addPieceToBoard(new Position('e', 1), new Piece(Color.WHITE, PieceType.KING))
+                .build();
+   game.writeJson(System.out, game);
+   ```
+   This code prints JSON to the standard output. Try the functionality.
+   The implementation of your `write` methods is not used by the `Main` class,
+   but the correctness is checked by unit tests.
+   >  The tests create a `game-out.txt` file. Check it for the content.
 
-> Note that you should program defensively from the very beginning. There are many other methods in our code in 
-> which we should check input parameters and respond to their possible errors. Do it for your code voluntarily.
-> Don't forget to update Javadoc adequately.
-   
 ## Takeaways
-* Streams require you to change your mindset from iterative data inspection to data pipelines.
-* Program defensively. Use special return values to indicate errors in input parameters. 
-  Use exceptions if special values are not possible (i.e., for constructors).
-* Use exceptions carefully. Throwing an exception triggers the crash of the application
-  (and then makes users angry) unless some code "above" stops it.
+* Only **close** streams/files that you have opened.
+* Use try with resources.
+* Study the methods `Writer#flush()`, `Reader#ready()`.
+* You can create a file using `new File("soubor.txt")`.
 
 ## Features to be manually checked by tutors 
-* Using streams in the task 1.
-* The copy constructor of the `Piece` should throw an exception implicitly (no special code throwing the exception 
-  should be present).
-* Throwing exceptions in the `play` and `getInputFromPlayer` methods (task 6).
+* The setters for players one and two in the `GameBuilder` must be protected.
