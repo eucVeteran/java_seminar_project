@@ -2,6 +2,7 @@ package cz.muni.fi.pb162.project;
 
 import cz.muni.fi.pb162.project.exceptions.MissingPlayerException;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -22,7 +23,7 @@ import static cz.muni.fi.pb162.project.StateOfGame.WHITE_PLAYER_WIN;
  *
  * @author Azizbek Toshpulatov
  */
-public class Chess extends Game {
+public class Chess extends Game implements GameWritable {
 
     /**
      * Constructs a chess game with 2 players and a board of size {@link Board#DEF_SIZE} x {@link Board#DEF_SIZE}.
@@ -42,7 +43,7 @@ public class Chess extends Game {
      * @param playerTwo second player.
      * @param board     given board.
      */
-    private Chess(Player playerOne, Player playerTwo, Board board) {
+    Chess(Player playerOne, Player playerTwo, Board board) {
         super(playerOne, playerTwo, board);
     }
 
@@ -129,18 +130,148 @@ public class Chess extends Game {
         }
     }
 
+    @Override
+    public void write(OutputStream os) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os));
+
+        writer.write(getPlayerOne().name() + "-" + getPlayerOne().color() + ";");
+        writer.write(getPlayerOne().name() + "-" + getPlayerTwo().color());
+        writer.write(System.lineSeparator());
+
+        for (int column = 0; column < getBoard().getSize(); column++) {
+            for (int line = 0; line < getBoard().getSize(); line++) {
+                Piece piece = getBoard().getPiece(new Position(column, line));
+                if (piece == null) {
+                    writer.write("_");
+                } else {
+                    writer.write(piece.getPieceType() + "," + piece.getColor());
+                }
+
+                if (line < getBoard().getSize() - 1) {
+                    writer.write(";");
+                }
+            }
+            writer.write(System.lineSeparator());
+        }
+
+        writer.close();
+    }
+
+    @Override
+    public void write(File file) throws IOException {
+        write(new FileOutputStream(file));
+    }
+
     /**
      * Returns a builder for {@link Chess} class.
      *
      * @author Azizbek Toshpulatov
      */
-    public static class Builder extends GameBuilder<Chess> {
+    public static class Builder extends GameBuilder<Chess> implements GameReadable {
         @Override
         public Chess build() {
             if (getPlayerOne() == null || getPlayerTwo() == null) {
                 throw new MissingPlayerException("A game must have 2 players");
             }
             return new Chess(getPlayerOne(), getPlayerTwo(), getBoard());
+        }
+
+        private void readAndPutPieces(int column, int line, String pieceToRead) {
+            Position positionToPut = new Position(column, line);
+
+            if (pieceToRead.isEmpty() || pieceToRead.charAt(0) == '_') {
+                getBoard().putPieceOnBoard(positionToPut, null);
+                return;
+            }
+
+            String[] typeAndColor = pieceToRead.split(",");
+
+            PieceType pieceType = PieceType.valueOf(typeAndColor[0]);
+            Color pieceColor = Color.valueOf(typeAndColor[1]);
+
+            getBoard().putPieceOnBoard(positionToPut, new Piece(pieceColor, pieceType));
+        }
+
+        private void readColumnOfBoard(String[] piecesInColumn, int columnNum) {
+            for (int i = 0; i < piecesInColumn.length; i++) {
+                readAndPutPieces(columnNum, i, piecesInColumn[i]);
+            }
+        }
+
+        private void takePlayersFromHeader(BufferedReader br) throws IOException {
+            String header = br.readLine();
+            String[] firstAndSecond = header.split(";");
+
+            if (firstAndSecond.length < 2) {
+                throw new IOException("There has to be at least 2 players.");
+            }
+
+            for (int i = 0; i < 2; i++) {
+                String[] currentPlayerData = firstAndSecond[0].split("-");
+                if (currentPlayerData.length < 2) {
+                    throw new IOException("Player must have a name and color.");
+                }
+
+                String playerName = currentPlayerData[0];
+                Color playerColor;
+
+                try {
+                    playerColor = Color.valueOf(currentPlayerData[1]);
+                } catch (IllegalArgumentException iae) {
+                    throw new IOException("Incorrect color for player" + (i + 1));
+                }
+
+                addPlayer(new Player(playerName, playerColor));
+            }
+        }
+
+        @Override
+        public Builder read(InputStream is, boolean hasHeader) throws IOException {
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+
+            if (hasHeader) {
+                try {
+                    takePlayersFromHeader(br);
+                } catch (Exception e) {
+                    throw new IOException(e);
+                }
+            }
+
+            for (int columnIndex = 0; columnIndex < getBoard().getSize(); columnIndex++) {
+                String[] column;
+                try {
+                    column = br.readLine().split(";");
+                } catch (Exception e) {
+                    throw new IOException("Wrong row size in given data about the board", e);
+                }
+
+                if (column.length != getBoard().getSize()) {
+                    throw new IOException("Wrong column size in given data about the board");
+                }
+
+                try {
+                    readColumnOfBoard(column, columnIndex);
+                } catch (Exception e) {
+                    throw new IOException("There was an error while reading a column of given board: ", e);
+                }
+            }
+
+            return this;
+        }
+
+        @Override
+        public Builder read(InputStream is) throws IOException {
+            return read(is, false);
+        }
+
+        @Override
+        public Builder read(File file) throws IOException {
+            return read(new FileInputStream(file), false);
+        }
+
+        @Override
+        public Builder read(File file, boolean hasHeader) throws IOException {
+            return read(new FileInputStream(file), hasHeader);
         }
     }
 }

@@ -2,6 +2,8 @@ package cz.muni.fi.pb162.project.demo;
 
 import cz.muni.fi.pb162.project.*;
 
+import java.io.IOException;
+
 /**
  * Class for running main method.
  *
@@ -14,12 +16,12 @@ public class Main {
      *
      * @param args command line arguments, will be ignored.
      */
-    public static void main(String[] args) {
-        Player mat = new Player("Mat", Color.WHITE);
-        Player pat = new Player("Pat", Color.BLACK);
-        var chess = new Chess(mat, pat);
-        var draughts = new Draughts(mat, pat);
-        System.out.println(chess.getBoard().toString());
-        System.out.println(draughts.getBoard().toString());
+    public static void main(String[] args) throws IOException {
+        var game = new Chess.Builder()
+                .addPlayer(new Player("Mat", Color.WHITE))
+                .addPlayer(new Player("Pat", Color.BLACK))
+                .addPieceToBoard(new Position('e', 1), new Piece(Color.WHITE, PieceType.KING))
+                .build();
+        game.writeJson(System.out, game);
     }
 }
