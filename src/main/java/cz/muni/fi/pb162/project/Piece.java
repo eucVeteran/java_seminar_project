@@ -2,9 +2,8 @@ package cz.muni.fi.pb162.project;
 
 import cz.muni.fi.pb162.project.moves.*;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -20,6 +19,8 @@ public class Piece implements Prototype<Piece> {
     private final PieceType pieceType;
     private final long id = ID_VALUES.incrementAndGet();
     private final List<Move> movementStrategies;
+    private static final Map<PieceType, Map<Color, String>> PIECE_ICONS = new HashMap<>();
+    private static final String PIECES_FILE = "pieces.txt";
 
     /**
      * Creates a new instance of Piece with given {@code color} and {@code pieceType}.
@@ -57,14 +58,38 @@ public class Piece implements Prototype<Piece> {
         return new Piece(this);
     }
 
+    private void readIcons() throws IOException {
+        FileInputStream is = new FileInputStream(PIECES_FILE);
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        String line;
+        while ((line = br.readLine()) != null) {
+            String[] currentLine = line.split(":");
+            Color color = Color.valueOf(currentLine[0]);
+            PieceType pieceType = PieceType.valueOf(currentLine[1]);
+            if (!PIECE_ICONS.containsKey(pieceType)) {
+                PIECE_ICONS.put(pieceType, new HashMap<>());
+            }
+            PIECE_ICONS.get(pieceType).put(color, currentLine[2]);
+        }
+    }
+
     /**
-     * Return a first letter of a piece type, e.g. KING => "K".
+     * Returns a {@link Piece} icon.
      *
-     * @return a first letter of a piece type.
+     * @return a {@link Piece} icon.
      */
     @Override
     public String toString() {
-        return String.valueOf(pieceType.toString().charAt(0));
+        if (PIECE_ICONS.isEmpty()) {
+            try {
+                readIcons();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return PIECE_ICONS.get(pieceType).get(color);
+//        return String.valueOf(pieceType.toString().charAt(0));
     }
 
     public Color getColor() {
