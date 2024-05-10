@@ -1,70 +1,53 @@
 # PB162 seminar project
 
 ## Objectives
-* Input-output, I/O exceptions
+* Practice the knowledge gained so far. 
 
 ## Tasks
-Unless otherwise instructed, create new classes/enums/records in the `cz.muni.fi.pb162.project` package.
+We want to use fancy black-and-white Unicode icons instead of boring letters when showing the game board.
+The icons are defined in the `pieces.txt` file. If you open the file in the IDE and see Unicode values,
+e.g., "\u2654", instead of fancy icons, you need to set a monospace font in the settings, e.g.,
+DejaVu Sans Mono, Everson Mono, FreeSerif, Chrysanthi Unicode, etc.
 
-1. Modify the `Chess.Builder` class to implement the `GameReadable` interface.
-   - The `read(InputStream is)` reads data about the board layout from the given _open binary input_,
-     instantiates pieces, and puts them on the board. The data format is as follows:
-      - Each row of the board is on a separate line.
-      - Pieces are separated from one another by `;` and `_` represents an empty board position (a `null` piece).
-      - For the initial board layout, the data looks like this:
-      ```
-          ROOK,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;ROOK,BLACK
-          KNIGHT,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;KNIGHT,BLACK
-          BISHOP,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;BISHOP,BLACK
-          QUEEN,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;QUEEN,BLACK
-          KING,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;KING,BLACK
-          BISHOP,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;BISHOP,BLACK
-          KNIGHT,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;KNIGHT,BLACK
-          ROOK,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;ROOK,BLACK
-      ```
-   - If the `hasHeader` parameter of the overloaded `read(InputStream is, boolean hasHeader)` method is `false`,
-     then it works exactly the same as the previous method. If the parameter is `true`, then a header line with players is
-     expected tobe processed first. The format of the header line can be easily seen in the next example, where _Mat_ and _Pat_
-     are names of the players:
-      ```
-          Mat-WHITE;Pat-BLACK
-          ROOK,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;ROOK,BLACK
-          KNIGHT,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;KNIGHT,BLACK
-          BISHOP,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;BISHOP,BLACK
-          QUEEN,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;QUEEN,BLACK
-          KING,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;KING,BLACK
-          BISHOP,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;BISHOP,BLACK
-          KNIGHT,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;KNIGHT,BLACK
-          ROOK,WHITE;PAWN,WHITE;_;_;_;_;PAWN,BLACK;ROOK,BLACK
-      ```
-   - The other required variants of the `read` method with a `File` input parameter instead of `InputStream` work 
-     as expected - they read the same data from a file.
-   - All the `read` methods fail with an `IOException` on any I/O error **or data format error**.
-   - **Avoid code duplication** by reusing methods.
-   - Use _UTF-8_ encoding when reading text data.
-2. Modify the `Chess` class to implement the `GameWritable` interface.
-   - The output format is the same as that of the previous method. The header line with players is always printed.
-   > Use the correct line break separator instead of `\n`.
-3. Study the `writeJson` default method from the `GameWritable` interface. It is here to demonstrate the possibility of
-   writing the chess data in a structured JSON format. Update the `Main` class so that it uses the method:
-   ```java
-   var game = new Chess.Builder()
-                .addPlayer(new Player("Mat", Color.WHITE))
-                .addPlayer(new Player("Pat", Color.BLACK))
-                .addPieceToBoard(new Position('e', 1), new Piece(Color.WHITE, PieceType.KING))
-                .build();
-   game.writeJson(System.out, game);
-   ```
-   This code prints JSON to the standard output. Try the functionality.
-   The implementation of your `write` methods is not used by the `Main` class,
-   but the correctness is checked by unit tests.
-   >  The tests create a `game-out.txt` file. Check it for the content.
+1. Update the `Piece` class so that it is displayed as an icon of the correct color instead of a letter.
+   - You need to store a fancy icon for each combination of a piece's color and type. 
+     Decide how to do this efficiently. Add an appropriate attribute to the `Piece` class.
+   - Refactor the `toString()` method so that it returns an appropriate icon based on the type and color
+     of the specific piece. To get the icons, you have to read them from the file. However, 
+     the icons are read from the file only once **and not sooner than firstly required** (lazy reading),
+     i.e., after only the first call of the `Piece.toString()` method (and never again).
+     > Icons are encoded as Unicode characters. Therefore, read them as ordinary `String` values.
+   - If anything goes wrong during the icons reading, then the `toString()` method fails with an exception.
+     But because it can't fail with checked exceptions, you have to transform them into unchecked exceptions.
+2. Clear the `Main.main` method. Add the following code:
+   - Create a chess game with Mat (white pieces) and Pat (black pieces) players.
+   - Create an infinite loop for `Game.play()`. If the method throws some exception (due to incorrect input), 
+     then the error message is printed to the standard **error** output, and the game continues. 
+3. Run the game :-) Use `CTRL+D` to end the game.
 
-## Takeaways
-* Only **close** streams/files that you have opened.
-* Use try with resources.
-* Study the methods `Writer#flush()`, `Reader#ready()`.
-* You can create a file using `new File("soubor.txt")`.
+# Takeaways
+* The Unicode values used for icons are as follows:
+  ```
+  WHITE-KING:\u2654
+  WHITE-QUEEN:\u2655
+  WHITE-BISHOP:\u2657
+  WHITE-ROOK:\u2656
+  WHITE-KNIGHT:\u2658
+  WHITE-PAWN:\u2659
+  BLACK-KING:\u265A
+  BLACK-QUEEN:\u265B
+  BLACK-BISHOP:\u265D
+  BLACK-ROOK:\u265C
+  BLACK-KNIGHT:\u265E
+  BLACK-PAWN:\u265F
+  WHITE-DRAUGHTS_MAN:\u26C0
+  WHITE-DRAUGHTS_KING:\u26C1
+  BLACK-DRAUGHTS_MAN:\u26C2
+  BLACK-DRAUGHTS_KING:\u26C3
+  ```
 
 ## Features to be manually checked by tutors 
-* The setters for players one and two in the `GameBuilder` must be protected.
+* The "pieces.txt" is defined as a constant.
+* The icons are read only once and only when first needed.
+* Dealing with exceptions in the `Piece.toString()`, conversion to unchecked exceptions.
+* Dealing with exceptions in the `Main` class.

@@ -13,7 +13,7 @@
 !.gitlab-ci.yml
 !*.png
 !*.jpg
-!game-ok.txt
+!pieces.txt
 
 # From directories, ignore...
 ### Idea:

@@ -7,9 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import org.junit.Before;
+import org.junit.Test;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatIOException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,7 +27,7 @@ public class ChessIOTest {
 
     private Chess.Builder builder;
 
-    @BeforeEach
+    @Before
     public void setUp() {
         builder = new Chess.Builder();
     }
@@ -109,8 +109,7 @@ public class ChessIOTest {
     public void writeAndReadData() throws IOException {
         var player = new Player("Pat", Color.BLACK);
         var player2 = new Player("Mat", Color.WHITE);
-        var board = new Board();
-        Chess game = new Chess(player, player2, board);
+        Chess game = new Chess(player, player2);
         var piece = new Piece(Color.WHITE, PieceType.QUEEN);
         game.getBoard().putPieceOnBoard(new Position(4, 2), piece);
         game.write(new File(GAME_OUT_TXT));
