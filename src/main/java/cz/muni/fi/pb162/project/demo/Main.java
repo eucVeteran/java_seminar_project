@@ -25,7 +25,11 @@ public class Main {
                 .build();
 
         while (true) {
-            game.play();
+            try {
+                game.play();
+            } catch (EmptySquareException | NotAllowedMoveException e) {
+                System.out.println(e);
+            }
         }
     }
 }

@@ -19,7 +19,7 @@ public class Piece implements Prototype<Piece> {
     private final PieceType pieceType;
     private final long id = ID_VALUES.incrementAndGet();
     private final List<Move> movementStrategies;
-    private static final Map<PieceType, Map<Color, String>> PIECE_ICONS = new HashMap<>();
+    private static final Map<Piece, String> PIECE_ICONS = new HashMap<>();
     private static final String PIECES_FILE = "pieces.txt";
 
     /**
@@ -64,12 +64,12 @@ public class Piece implements Prototype<Piece> {
         String line;
         while ((line = br.readLine()) != null) {
             String[] currentLine = line.split(":");
+
             Color color = Color.valueOf(currentLine[0]);
             PieceType pieceType = PieceType.valueOf(currentLine[1]);
-            if (!PIECE_ICONS.containsKey(pieceType)) {
-                PIECE_ICONS.put(pieceType, new HashMap<>());
-            }
-            PIECE_ICONS.get(pieceType).put(color, currentLine[2]);
+            Piece piece = new Piece(color, pieceType);
+
+            PIECE_ICONS.put(piece, currentLine[2]);
         }
     }
 
@@ -88,8 +88,7 @@ public class Piece implements Prototype<Piece> {
             }
         }
 
-        return PIECE_ICONS.get(pieceType).get(color);
-//        return String.valueOf(pieceType.toString().charAt(0));
+        return PIECE_ICONS.get(this);
     }
 
     public Color getColor() {
