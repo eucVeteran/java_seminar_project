@@ -4,8 +4,6 @@ import cz.muni.fi.pb162.project.*;
 import cz.muni.fi.pb162.project.exceptions.EmptySquareException;
 import cz.muni.fi.pb162.project.exceptions.NotAllowedMoveException;
 
-import java.io.IOException;
-
 /**
  * Class for running main method.
  *
