@@ -18,7 +18,7 @@ public class Main {
      *
      * @param args command line arguments, will be ignored.
      */
-    public static void main(String[] args) throws IOException, EmptySquareException, NotAllowedMoveException {
+    public static void main(String[] args) {
         var game = new Chess.Builder()
                 .addPlayer(new Player("Mat", Color.WHITE))
                 .addPlayer(new Player("Pat", Color.BLACK))
