@@ -136,7 +136,7 @@ public class Chess extends Game implements GameWritable {
 
         writer.write(getPlayerOne().name() + "-" + getPlayerOne().color() + ";");
         writer.write(getPlayerOne().name() + "-" + getPlayerTwo().color());
-        writer.write(System.lineSeparator());
+        writer.newLine();
 
         for (int column = 0; column < getBoard().getSize(); column++) {
             for (int line = 0; line < getBoard().getSize(); line++) {
@@ -151,9 +151,9 @@ public class Chess extends Game implements GameWritable {
                     writer.write(";");
                 }
             }
-            writer.write(System.lineSeparator());
+            writer.newLine();
         }
-
+        writer.flush();
         writer.close();
     }
 
@@ -242,7 +242,7 @@ public class Chess extends Game implements GameWritable {
                 try {
                     column = br.readLine().split(";");
                 } catch (Exception e) {
-                    throw new IOException("Wrong row size in given data about the board", e);
+                    throw new IOException("Wrong line size in given data about the board", e);
                 }
 
                 if (column.length != getBoard().getSize()) {

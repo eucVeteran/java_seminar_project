@@ -41,7 +41,7 @@ public abstract class Game implements Playable {
      *
      * @param playerOne first player.
      * @param playerTwo second player.
-     * @param board built board.
+     * @param board     built board.
      */
     public Game(Player playerOne, Player playerTwo, Board board) {
         this.playerOne = playerOne;
@@ -93,6 +93,7 @@ public abstract class Game implements Playable {
     @Override
     public void play() throws EmptySquareException, NotAllowedMoveException {
         while (stateOfGame == PLAYING) {
+            System.out.println(getBoard().toString());
             System.out.println("State of game: " + stateOfGame);
 
             Player currentPlayer = getCurrentPlayer();
