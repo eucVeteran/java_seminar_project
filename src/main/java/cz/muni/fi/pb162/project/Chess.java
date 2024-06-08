@@ -173,6 +173,9 @@ public class Chess extends Game implements GameWritable {
             if (getPlayerOne() == null || getPlayerTwo() == null) {
                 throw new MissingPlayerException("A game must have 2 players");
             }
+            if (getBoard().getAllPiecesFromBoard().length == 0) {
+                return new Chess(getPlayerOne(), getPlayerTwo());
+            }
             return new Chess(getPlayerOne(), getPlayerTwo(), getBoard());
         }
 

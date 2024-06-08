@@ -58,9 +58,6 @@ public abstract class Game implements Playable {
      */
     @Override
     public void move(Position oldPosition, Position newPosition) {
-//        if (board.getPiece(oldPosition) == null) {
-//            return;
-//        }
         Piece piece = board.getPiece(oldPosition);
         board.putPieceOnBoard(oldPosition, null);
         board.putPieceOnBoard(newPosition, piece);
@@ -106,13 +103,17 @@ public abstract class Game implements Playable {
                 throw new EmptySquareException("You must move a certain piece that is on the board");
             }
 
-            if (getBoard().getPiece(to).getColor() == currentPlayer.color()) {
+            if (getBoard().getPiece(from).getColor() != currentPlayer.color()) {
+                throw new NotAllowedMoveException("You must move your pieces, not opponents");
+            }
+
+            if (getBoard().getPiece(to) != null &&
+                    getBoard().getPiece(to).getColor() == currentPlayer.color()) {
                 throw new NotAllowedMoveException("You cannot move your piece on top of your piece");
             }
 
             Piece currentPiece = getBoard().getPiece(from);
-            if (currentPiece.getAllPossibleMoves(this).stream().noneMatch(position -> position == to) ||
-                    !getBoard().inRange(to)) {
+            if (!currentPiece.getAllPossibleMoves(this).contains(to) || !getBoard().inRange(to)) {
                 throw new NotAllowedMoveException("Your piece cannot do that move");
             }
 

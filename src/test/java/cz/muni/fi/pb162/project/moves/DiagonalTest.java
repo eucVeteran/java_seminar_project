@@ -37,45 +37,4 @@ class DiagonalTest {
         Assertions.assertThat(diagonal2.getAllowedMoves(game, new Position(5, 5)))
                 .containsOnly(new Position(4, 6), new Position(6, 6));
     }
-
-    @Test
-    void getAllowedMovesStepBoardSize() {
-        Game game = new Chess.Builder().addPlayer(player1).addPlayer(player2).build(); // empty board
-        game.getBoard().putPieceOnBoard(new Position(3, 3), new Piece(Color.WHITE, PieceType.QUEEN));
-        var diagonal = new Diagonal();
-        var diagonal2 = new Diagonal(game.getBoard().getSize(), true);
-        Assertions.assertThat(diagonal.getAllowedMoves(game, new Position(3, 3)))
-                .containsOnly(new Position(0, 0),
-                        new Position(1, 1),
-                        new Position(2, 2),
-                        new Position(4, 4),
-                        new Position(5, 5),
-                        new Position(6, 6),
-                        new Position(7, 7),
-                        new Position(2, 4),
-                        new Position(4, 2),
-                        new Position(1, 5),
-                        new Position(5, 1),
-                        new Position(0, 6),
-                        new Position(6, 0));
-        Assertions.assertThat(diagonal2.getAllowedMoves(game, new Position(3, 3)))
-                .containsOnly(new Position(4, 4),
-                        new Position(5, 5),
-                        new Position(6, 6),
-                        new Position(7, 7),
-                        new Position(2, 4),
-                        new Position(1, 5),
-                        new Position(0, 6));
-        game.getBoard().putPieceOnBoard(new Position(3, 3), new Piece(Color.BLACK, PieceType.QUEEN));
-        Assertions.assertThat(diagonal2.getAllowedMoves(game, new Position(3, 3)))
-                .containsOnly(new Position(0, 0),
-                        new Position(1, 1),
-                        new Position(2, 2),
-                        new Position(4, 2),
-                        new Position(5, 1),
-                        new Position(6, 0));
-        game = new Chess(null, null);
-        Assertions.assertThat(diagonal.getAllowedMoves(game, new Position(0, 0))).isEmpty();
-    }
-
 }

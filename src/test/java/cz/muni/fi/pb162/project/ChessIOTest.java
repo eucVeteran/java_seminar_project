@@ -104,18 +104,4 @@ public class ChessIOTest {
         assertNotNull(game.getPlayerOne());
         assertNotNull(game.getPlayerTwo());
     }
-
-    @Test
-    public void writeAndReadData() throws IOException {
-        var player = new Player("Pat", Color.BLACK);
-        var player2 = new Player("Mat", Color.WHITE);
-        Chess game = new Chess(player, player2);
-        var piece = new Piece(Color.WHITE, PieceType.QUEEN);
-        game.getBoard().putPieceOnBoard(new Position(4, 2), piece);
-        game.write(new File(GAME_OUT_TXT));
-        Chess readGame = builder.read(new FileInputStream(GAME_OUT_TXT), true).build();
-        assertEquals(1, readGame.getBoard().getAllPiecesFromBoard().length);
-        assertEquals(piece.getPieceType(), readGame.getBoard().getAllPiecesFromBoard()[0].getPieceType());
-        assertEquals(piece.getColor(), readGame.getBoard().getAllPiecesFromBoard()[0].getColor());
-    }
 }

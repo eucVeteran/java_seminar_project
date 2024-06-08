@@ -109,6 +109,9 @@ public class Draughts extends Game {
             if (getPlayerOne() == null || getPlayerTwo() == null) {
                 throw new MissingPlayerException("A game must have 2 players");
             }
+            if (getBoard().getAllPiecesFromBoard().length == 0) {
+                return new Draughts(getPlayerOne(), getPlayerTwo());
+            }
             return new Draughts(getPlayerOne(), getPlayerTwo(), getBoard());
         }
     }
